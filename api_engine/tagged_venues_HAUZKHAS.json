@@ -1,0 +1,2201 @@
+[
+  {
+    "venue_id": 111,
+    "rejected": false,
+    "summary": "A popular cafe and restaurant known for its delicious international cuisine, specialty coffees, great breakfast, and cozy ambiance, suitable for casual dining or social gatherings.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 112,
+    "rejected": false,
+    "summary": "An aesthetic cafe known for its cute decor, lake view, and good coffee, offering a pleasant spot for meals or desserts despite mixed food and service reviews.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "cozy",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "quick_stop",
+      "outdoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 113,
+    "rejected": false,
+    "summary": "An upscale Italian restaurant offering delicious food, a cozy atmosphere, and beautiful views of Hauz Khas Lake and a nearby castle, ideal for relaxed meals and special occasions.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "romantic",
+      "fancy",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "outdoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 114,
+    "rejected": false,
+    "summary": "A large and lively restaurant, pub, and bar known for its vibrant ambiance, music, and social scene, perfect for groups and late-night outings with good food and cocktails.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "casual",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "late_night",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 115,
+    "rejected": false,
+    "summary": "A Himalayan Cook House offering Asian cuisine with an amazing view of Deer Park, known for its cozy decor and specific flavors, suitable for dates or outings with friends despite mixed service reviews.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "romantic",
+      "casual",
+      "quiet"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 116,
+    "rejected": false,
+    "summary": "A popular microbrewery offering a variety of craft beers, delicious food, and a lively atmosphere, perfect for a casual outing or a late-night experience.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "trendy",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "late_night",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 117,
+    "rejected": false,
+    "summary": "An aesthetic bistro boasting beautiful lake views, live music, and an extensive menu with diverse cuisine, ideal for a relaxed meal or a social gathering.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "cozy",
+      "lively",
+      "romantic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "outdoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 118,
+    "rejected": false,
+    "summary": "A long-standing restaurant known for its delicious and fresh Indian cuisine, particularly kebabs and biryanis, offering generous portions at reasonable prices in a cozy setting.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 119,
+    "rejected": false,
+    "summary": "A fine dining restaurant by Chef Yuvraj Kohli offering a perfect blend of culinary tradition and modern palates with impeccable service and a luxurious ambiance, ideal for special occasions.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "romantic",
+      "aesthetic",
+      "quiet"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 120,
+    "rejected": false,
+    "summary": "A clean and spacious cafe serving authentic Kerala cuisine in a minimalist setting, providing a soothing vibe for relaxation and a delightful dining experience.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "aesthetic",
+      "quiet"
+    ],
+    "special_tags": [
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 121,
+    "rejected": false,
+    "summary": "A cozy and aesthetic cafe, bar, and kitchen offering delicious food, fancy drinks, and a warm ambiance, perfect for dates, long conversations, or peaceful work.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "romantic",
+      "casual"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 122,
+    "rejected": false,
+    "summary": "A family-friendly Indian restaurant known for its authentic South and North Indian dishes, warm ambiance, and excellent service, suitable for outings with family or friends.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "family_friendly",
+      "casual",
+      "lively"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 123,
+    "rejected": false,
+    "summary": "An authentic South Indian restaurant offering delicious cuisine and a calm, temple-like ambiance, making it a pleasant spot for a peaceful meal with family or friends.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "casual",
+      "family_friendly",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 124,
+    "rejected": false,
+    "summary": "A Pan-Asian restaurant known for its impressive food presentation and sushi, offering a range of dishes in an amazing ambiance.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "aesthetic",
+      "trendy",
+      "lively"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 125,
+    "rejected": false,
+    "summary": "A lively club and lounge known for its excellent vibe, great music from DJs, delicious food, and friendly staff, perfect for hanging out with friends.",
+    "category_tags": [
+      "bar",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "casual",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "late_night",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 126,
+    "rejected": false,
+    "summary": "A restaurant known for its warm, inviting ambiance, quality food, and attentive service, suitable for family dining and special occasions.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "family_friendly",
+      "romantic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 127,
+    "rejected": false,
+    "summary": "A charming and cozy tea room offering delicious breakfast, bakery items, and a variety of teas and coffees, perfect for a relaxed brunch or date.",
+    "category_tags": [
+      "cafe",
+      "dessert"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "romantic",
+      "quiet"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 128,
+    "rejected": false,
+    "summary": "A lakeside bistro offering drinks, live music, and a view of Hauz Khas lake, suitable for cozy get-togethers or a romantic evening.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "romantic",
+      "lively",
+      "casual"
+    ],
+    "special_tags": [
+      "date_spot",
+      "outdoor",
+      "late_night"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 129,
+    "rejected": false,
+    "summary": "An innovative restaurant celebrated for its outstanding, flavoursome food and amazing cocktails, set in a pleasant and calming atmosphere perfect for special occasions.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "romantic",
+      "quiet",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 130,
+    "rejected": false,
+    "summary": "A vibrant and lively bar and restaurant known for its unique, innovative cocktails, contemporary Indian cuisine, and energetic atmosphere with a DJ, perfect for group celebrations or date nights.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "aesthetic",
+      "fancy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "late_night",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 131,
+    "rejected": false,
+    "summary": "A fine dining restaurant offering Italian and Mediterranean cuisine in a stylish setting, known for its beautiful ambiance, attentive service, and inventive dishes, ideal for special occasions.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "romantic",
+      "aesthetic",
+      "cozy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 132,
+    "rejected": false,
+    "summary": "A renowned Indian restaurant offering authentic North Indian and Mughlai cuisine in a warm and inviting atmosphere, praised for its flavorful dishes, refreshing mocktails, and attentive service.",
+    "category_tags": [
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "family_friendly",
+      "casual",
+      "cozy",
+      "lively"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 133,
+    "rejected": false,
+    "summary": "A versatile rooftop cafe and bar transforming from a relaxed daytime spot to a lively nightlife venue with live music, DJs, and salsa nights, known for its eclectic menu, inventive cocktails, and vibrant atmosphere.",
+    "category_tags": [
+      "cafe",
+      "bar"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "late_night",
+      "outdoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 134,
+    "rejected": false,
+    "summary": "A comfortable and bright coffee shop known for its high-quality, consistent coffee, light food options, and a relaxed atmosphere suitable for working, reading, or casual meetups.",
+    "category_tags": [
+      "cafe"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "quiet",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "indoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 135,
+    "rejected": false,
+    "summary": "A unique cafe offering a cozy, aesthetic atmosphere with comfortable floor seating, often featuring live music and board games, ideal for relaxed hangouts and enjoying a distinct vibe.",
+    "category_tags": [
+      "cafe"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "casual",
+      "lively"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 136,
+    "rejected": false,
+    "summary": "A cozy and casual cafe offering a wide selection of coffee and diverse food items, ideal for everyday hangouts.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 137,
+    "rejected": false,
+    "summary": "An aesthetic and cozy cafe with relaxed vibes, known for excellent breakfast, coffee, and a welcoming atmosphere suitable for work or casual hangouts.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "quiet",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "date_spot"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 138,
+    "rejected": false,
+    "summary": "A charming, beautifully decorated cafe and cakery renowned for its wide range of delicious cakes, hot chocolates, and an aesthetically pleasing ambiance perfect for an evening treat.",
+    "category_tags": [
+      "cafe",
+      "dessert"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "cozy",
+      "romantic",
+      "trendy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 139,
+    "rejected": false,
+    "summary": "A spacious and vibrant cafe-restaurant featuring a stylish ambiance, live music, and a diverse menu of Asian, Tibetan, and international dishes, alongside delicious desserts.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "aesthetic",
+      "cozy",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 140,
+    "rejected": false,
+    "summary": "A charming, music-themed cafe offering great coffee, chill vibes, and occasional live music, providing a unique and cozy spot for quiet evenings or short visits.",
+    "category_tags": [
+      "cafe"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "quiet",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "indoor",
+      "outdoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 141,
+    "rejected": false,
+    "summary": "A comfortable and cozy cafe and restaurant known for its mix of Indian, Pan Asian, and European dishes, offering both indoor and decent outdoor seating ideal for hanging out with family and friends.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 142,
+    "rejected": false,
+    "summary": "An exquisite cafe and restaurant offering a unique menu, stunning Instagram-worthy ambiance, and impeccable service, perfect for friends and families to enjoy a meal or browse books, complete with a charming patio.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "trendy",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 143,
+    "rejected": true,
+    "summary": "Rejected: Despite aesthetic ambiance, multiple severe reviews highlight inedible, stale, or stinky food, making it unreliable as a dining destination.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 144,
+    "rejected": true,
+    "summary": "Rejected: The venue has been permanently closed according to recent user updates.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 145,
+    "rejected": false,
+    "summary": "A 100% eggless cakery and dessert bar highly praised for its delicious, custom-designed cakes and pastries, ideal for special occasions or a sweet treat.",
+    "category_tags": [
+      "dessert",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 146,
+    "rejected": false,
+    "summary": "A vibrant restro bar offering food, creative drinks, and live music, suitable for casual visits and special occasions.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "late_night"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 147,
+    "rejected": false,
+    "summary": "A rooftop pub and grub offering great views, live music, and a lively atmosphere, ideal for sunset evenings.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "outdoor",
+      "date_spot",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 148,
+    "rejected": false,
+    "summary": "A cozy patio and bar with good ambience and outstanding hospitality, featuring indoor and fantastic outdoor seating with valet service.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly",
+      "date_spot"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 149,
+    "rejected": false,
+    "summary": "A unique gastropub known for its distinctive architecture, lively atmosphere with live music on weekends, delicious food, and a free game room with pool and foosball.",
+    "category_tags": [
+      "bar",
+      "restaurant",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 150,
+    "rejected": false,
+    "summary": "A cafe and bar known for its vibrant, electric night club and party atmosphere, offering delicious food and impressive cocktails, ideal for late-night outings.",
+    "category_tags": [
+      "cafe",
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "casual"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "late_night",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 151,
+    "rejected": false,
+    "summary": "A lively bar and restaurant offering delicious food, drinks, DJ nights, and a cozy-chic atmosphere with a lakeside view.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "lively",
+      "aesthetic",
+      "trendy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "late_night",
+      "outdoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 152,
+    "rejected": false,
+    "summary": "A lively restobar and club offering food, drinks, live music, and entertainment options in a cozy, well-maintained setting suitable for friends and family.",
+    "category_tags": [
+      "bar",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "cozy",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "outdoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 153,
+    "rejected": false,
+    "summary": "A lively kitchen bar known for drinks, music, and a terrace, offering a space to socialize, eat, and dance.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "outdoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 154,
+    "rejected": false,
+    "summary": "A bar and restaurant offering good food, reasonably priced drinks, and a lively yet comfortable ambiance with music suitable for conversations.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "cozy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 155,
+    "rejected": false,
+    "summary": "A vibrant and stylish hangout spot known for its lively atmosphere, modern interiors, diverse food menu, creative drinks, and good music.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "aesthetic",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "outdoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 156,
+    "rejected": false,
+    "summary": "A visually stunning rooftop restaurant offering diverse cuisine, attentive service, and breathtaking views of the Qutub Minar, ideal for a romantic evening or special occasion.",
+    "category_tags": [
+      "restaurant",
+      "bar"
+    ],
+    "vibe_tags": [
+      "romantic",
+      "fancy",
+      "aesthetic",
+      "lively"
+    ],
+    "special_tags": [
+      "date_spot",
+      "outdoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 157,
+    "rejected": false,
+    "summary": "A lively beer cafe offering a range of beers, delicious snacks, and a good ambiance, despite some issues with beer availability and pricing.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "group_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "late_night"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 158,
+    "rejected": false,
+    "summary": "A popular bar and restaurant known for its great ambiance, friendly staff, good food, and honest pricing on a wide selection of alcohol.",
+    "category_tags": [
+      "bar",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "cozy",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "late_night"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 159,
+    "rejected": false,
+    "summary": "A highly-rated rooftop restaurant offering stunning lake views, delicious food, live music, and a wonderfully cozy yet vibrant ambiance, ideal for relaxed hangouts or special occasions.",
+    "category_tags": [
+      "restaurant",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "cozy",
+      "romantic",
+      "lively"
+    ],
+    "special_tags": [
+      "outdoor",
+      "date_spot",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 160,
+    "rejected": false,
+    "summary": "A charming and cozy Korean-themed cafe offering authentic ramyun, a selection of Korean products, and a unique cultural ambiance, despite its compact size.",
+    "category_tags": [
+      "cafe",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "aesthetic",
+      "trendy",
+      "casual"
+    ],
+    "special_tags": [
+      "indoor",
+      "group_friendly",
+      "quick_stop"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 161,
+    "rejected": false,
+    "summary": "A highly-rated vegetarian North Indian restaurant known for its extensive menu, delicious food, pleasant ambiance, and impressive service, offering both dining and a small cafe for sweets.",
+    "category_tags": [
+      "restaurant",
+      "dessert"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "casual",
+      "family_friendly",
+      "lively"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 162,
+    "rejected": false,
+    "summary": "A restaurant specializing in healthy, high-protein meals with diverse options, praised for its quality ingredients, portion sizes, prompt service, and convenient delivery options, catering to diet-conscious individuals.",
+    "category_tags": [
+      "restaurant",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "casual",
+      "trendy",
+      "quiet",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 163,
+    "rejected": false,
+    "summary": "A sprawling and historic district park in Delhi, featuring ancient ruins, a serene lake, lush greenery, and designated areas for picnics and children, making it a popular destination for leisure, nature walks, social gatherings, and experiencing a blend of history and modern culture.",
+    "category_tags": [
+      "park",
+      "activity"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "lively",
+      "aesthetic",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly",
+      "date_spot"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 164,
+    "rejected": false,
+    "summary": "A distinctive pure vegetarian and non-alcoholic Burmese restaurant and tea room, known for its unique flavors, well-prepared dishes like Khao Suey, exceptional desserts, and attentive service, though some reviews note premium pricing for portion sizes.",
+    "category_tags": [
+      "restaurant",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "quiet",
+      "aesthetic",
+      "trendy"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 165,
+    "rejected": false,
+    "summary": "A small, cozy bookstore specializing in exclusive history and travel books, offering a unique \"travel cafe\" experience with complimentary tea or coffee on purchase, known for its quiet, serene ambiance, and positive vibes for readers and like-minded individuals.",
+    "category_tags": [
+      "shopping",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "quiet",
+      "aesthetic",
+      "trendy"
+    ],
+    "special_tags": [
+      "quick_stop",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 166,
+    "rejected": false,
+    "summary": "A historical complex featuring ancient ruins, an Islamic seminary, mosque, and tomb, offering a serene escape and rich cultural experience with scenic views of a lake and adjacent park.",
+    "category_tags": [
+      "activity",
+      "park"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "aesthetic",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly",
+      "date_spot"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 167,
+    "rejected": true,
+    "summary": "This is a metro station, primarily a transitional location for transportation, not a destination for an outing or experience.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 168,
+    "rejected": false,
+    "summary": "A vibrant entertainment hub offering a wide range of activities including bowling, arcade games, VR zones, and a pool table, alongside a stylish bar and restaurant with delicious food.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "family_friendly",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 169,
+    "rejected": false,
+    "summary": "A spacious gaming zone with an energetic ambiance, offering video games, bowling, and dining options, suitable for group outings and celebrations.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 170,
+    "rejected": false,
+    "summary": "A popular amusement center offering a wide array of arcade games, VR experiences, carnival games, and other activities suitable for family and friends.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 171,
+    "rejected": false,
+    "summary": "A multi-faceted entertainment venue offering bowling, various games, and a full-service bar and kitchen for casual dining, though food and service quality can be inconsistent.",
+    "category_tags": [
+      "activity",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 172,
+    "rejected": false,
+    "summary": "A grand, two-floor entertainment hub featuring bowling, extensive arcade games including VR and cricket simulators, a stunning bar, and diverse dining options suitable for friends, families, and events.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "trendy",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "date_spot"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 173,
+    "rejected": false,
+    "summary": "A comprehensive amusement center and event venue offering bowling, arcade games, VR experiences, and a unique mini-golf section on the terrace, complemented by excellent food and staff.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 174,
+    "rejected": false,
+    "summary": "A large, lively gaming zone featuring bowling, snooker, VR, arcade games, cricket simulators, and console gaming, complemented by a range of delicious food and drinks, ideal for family outings and group celebrations.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 175,
+    "rejected": false,
+    "summary": "A highly energetic and comprehensive indoor gaming and entertainment center offering bowling, cricket simulators, pool, and a variety of arcade games, making it a great spot for friends and families.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 176,
+    "rejected": false,
+    "summary": "A large entertainment center offering a variety of activities like bowling, VR games, arcade zones, and cricket simulators, making it a lively destination for fun outings with family and friends.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 177,
+    "rejected": false,
+    "summary": "A top-tier gaming arcade and entertainment center featuring VR experiences, golf simulators, PlayStation on giant screens, and dining options, perfect for family fun and group events.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 178,
+    "rejected": false,
+    "summary": "A premium movie theater offering a luxurious Gold Class experience with plush recliner seating, in-seat food and beverage service, and excellent audio-visual quality, ideal for a sophisticated cinematic outing.",
+    "category_tags": [
+      "cinema"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "romantic",
+      "quiet"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 179,
+    "rejected": false,
+    "summary": "An ultra-luxury cinema offering an unparalleled movie experience with incredibly comfortable recliner seats, gourmet food and bar service delivered to your seat, and top-tier sound and screen quality in an elegant setting.",
+    "category_tags": [
+      "cinema",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "romantic",
+      "quiet",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 180,
+    "rejected": false,
+    "summary": "A highly-regarded IMAX cinema known for its exceptional picture quality, earth-shattering sound, and professional staff, offering an immersive movie experience at an affordable ticket price.",
+    "category_tags": [
+      "cinema"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 181,
+    "rejected": false,
+    "summary": "A well-maintained cinema offering a comfortable movie-watching experience, complemented by an array of dining and socializing options in the surrounding courtyard.",
+    "category_tags": [
+      "cinema",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "lively",
+      "family_friendly",
+      "casual"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 182,
+    "rejected": false,
+    "summary": "A multiplex in a posh area offering a cinema experience with Dolby Atmos sound and generally spacious seating, despite some comfort issues in specific rows.",
+    "category_tags": [
+      "cinema"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "casual",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 183,
+    "rejected": false,
+    "summary": "A large multiplex offering premium formats like P-XL and 4DX for an immersive movie experience, located within a mall with shopping and dining options.",
+    "category_tags": [
+      "cinema",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 184,
+    "rejected": false,
+    "summary": "A vibrant and comprehensive mall offering extensive shopping, a diverse food court, and a premium PVR cinema with 4DX, making it a complete entertainment and leisure destination.",
+    "category_tags": [
+      "shopping",
+      "cinema",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "trendy",
+      "casual"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 185,
+    "rejected": false,
+    "summary": "A cinema known for its comfortable recliner seating, grand screen, and immersive sound, offering a premium movie-watching experience despite some cleanliness and service issues.",
+    "category_tags": [
+      "cinema"
+    ],
+    "vibe_tags": [
+      "cozy",
+      "fancy",
+      "quiet",
+      "romantic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 186,
+    "rejected": false,
+    "summary": "A private event venue offering exquisitely decorated, personalized, and romantic experiences with top-tier food and service, ideal for proposals and special occasions.",
+    "category_tags": [
+      "activity",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "romantic",
+      "fancy",
+      "aesthetic",
+      "lively"
+    ],
+    "special_tags": [
+      "date_spot",
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 187,
+    "rejected": false,
+    "summary": "A well-maintained historic artificial lake in South Delhi, perfect for serene walks, exercise, nature appreciation, and photography within a family-friendly environment.",
+    "category_tags": [
+      "park",
+      "activity"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "casual",
+      "aesthetic",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "outdoor",
+      "quick_stop",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 188,
+    "rejected": true,
+    "summary": "This is a historical monument/tomb primarily for viewing and historical appreciation, not offering a structured or engaging experience as a main destination.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 189,
+    "rejected": false,
+    "summary": "An expansive park in South Delhi that integrates historical monuments, a serene lake, and the Deer Park, perfect for nature walks, relaxation, and exploring its blend of history and urban charm.",
+    "category_tags": [
+      "park",
+      "activity"
+    ],
+    "vibe_tags": [
+      "casual",
+      "family_friendly",
+      "quiet",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly",
+      "quick_stop"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 190,
+    "rejected": true,
+    "summary": "This is a historical tomb, primarily for architectural viewing, and is considered a niche attraction rather than a major, primary destination for a general user.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 191,
+    "rejected": true,
+    "summary": "A historical Lodi-era tomb primarily for brief viewing, lacking a structured or engaging experience beyond a quick stop.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 192,
+    "rejected": false,
+    "summary": "A vast, well-maintained urban forest offering scenic trails, wildlife spotting, and opportunities for nature walks, jogging, and relaxation.",
+    "category_tags": [
+      "park",
+      "activity"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "casual",
+      "family_friendly",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 193,
+    "rejected": true,
+    "summary": "A small historical gumbad (pavilion) primarily for viewing, described as not a definite visit and better if you're already nearby.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 194,
+    "rejected": false,
+    "summary": "A sprawling historical fort complex featuring ruins, tombs, a large lake, and greenery, offering a peaceful setting for exploration, photography, and picnics.",
+    "category_tags": [
+      "activity",
+      "park"
+    ],
+    "vibe_tags": [
+      "quiet",
+      "aesthetic",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "outdoor",
+      "date_spot",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 195,
+    "rejected": true,
+    "summary": "A small historical tower primarily for external viewing, described as a quick visit and not a big tourist attraction.",
+    "category_tags": [],
+    "vibe_tags": [],
+    "special_tags": [],
+    "price_tags": []
+  },
+  {
+    "venue_id": 196,
+    "rejected": false,
+    "summary": "A trendy fashion store offering a wide and affordable collection of clothing, footwear, and accessories with helpful staff, providing a pleasant shopping experience.",
+    "category_tags": [
+      "shopping",
+      "activity"
+    ],
+    "vibe_tags": [
+      "trendy",
+      "casual",
+      "lively",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "indoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 197,
+    "rejected": false,
+    "summary": "A large and vibrant shopping mall offering a wide array of brands, diverse dining options, and entertainment like a cinema, suitable for extended shopping, meals, and family outings.",
+    "category_tags": [
+      "shopping",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "family_friendly",
+      "casual",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "date_spot"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 198,
+    "rejected": false,
+    "summary": "A specialized store known for its unique and high-quality collection of boots and shoes, offering excellent customer service and a pleasant shopping experience.",
+    "category_tags": [
+      "shopping"
+    ],
+    "vibe_tags": [
+      "trendy",
+      "casual",
+      "aesthetic",
+      "cozy"
+    ],
+    "special_tags": [
+      "indoor",
+      "quick_stop"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 199,
+    "rejected": false,
+    "summary": "A store offering a good collection of trendy clothing, shoes, and accessories known for reasonable prices, good quality products, and polite, helpful staff.",
+    "category_tags": [
+      "shopping"
+    ],
+    "vibe_tags": [
+      "casual",
+      "trendy",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "indoor",
+      "quick_stop"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 200,
+    "rejected": false,
+    "summary": "A lively and well-balanced market offering a diverse mix of branded stores, local boutiques, cafes, and dining options, ideal for shopping, errands, quick bites, and social gatherings.",
+    "category_tags": [
+      "shopping",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "family_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 201,
+    "rejected": false,
+    "summary": "A vibrant and spacious mall offering a complete experience with diverse shopping, a large food court, cinema, and gaming zones, ideal for a full day out.",
+    "category_tags": [
+      "shopping",
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "family_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 202,
+    "rejected": false,
+    "summary": "A premier luxury mall known for its elegant ambiance, high-end international brands, curated dining options, and a calm, sophisticated shopping experience.",
+    "category_tags": [
+      "shopping",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "fancy",
+      "quiet",
+      "romantic",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "date_spot",
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 203,
+    "rejected": false,
+    "summary": "A trendy 'fashion street' market featuring designer boutiques with unique, high-end apparel, along with cool cafes, offering a vibrant browsing and shopping experience.",
+    "category_tags": [
+      "shopping",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "trendy",
+      "aesthetic",
+      "lively",
+      "casual"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 204,
+    "rejected": false,
+    "summary": "An iconic and vibrant high-end market offering a unique blend of premium shopping, diverse dining, cozy cafes, and bookshops, ideal for leisurely exploration and people-watching.",
+    "category_tags": [
+      "shopping",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "trendy",
+      "casual",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "outdoor",
+      "group_friendly",
+      "date_spot"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 205,
+    "rejected": false,
+    "summary": "A renowned designer boutique showcasing a curated collection of high-end apparel and accessories from multiple Indian designers, offering a unique and personalized shopping experience.",
+    "category_tags": [
+      "shopping"
+    ],
+    "vibe_tags": [
+      "aesthetic",
+      "fancy",
+      "quiet",
+      "trendy"
+    ],
+    "special_tags": [
+      "indoor"
+    ],
+    "price_tags": [
+      "upscale"
+    ]
+  },
+  {
+    "venue_id": 206,
+    "rejected": false,
+    "summary": "A well-maintained snooker and pool club offering a professional playing experience, a VIP lounge, and snacks/drinks in a vibrant setting.",
+    "category_tags": [
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 207,
+    "rejected": false,
+    "summary": "A snooker and pool academy offering well-maintained tables, snacks, and fast food, ideal for casual gaming sessions with friends.",
+    "category_tags": [
+      "activity",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "group_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 208,
+    "rejected": false,
+    "summary": "A multi-sport facility offering well-maintained turfs for box cricket and football, along with badminton courts and coaching.",
+    "category_tags": [
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "outdoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 209,
+    "rejected": false,
+    "summary": "A snooker club offering premium tables, great ambiance, and various amenities, described as an amazing and affordable spot for players.",
+    "category_tags": [
+      "activity"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 210,
+    "rejected": false,
+    "summary": "A clean and spacious snooker and pool club with well-maintained tables, air conditioning, and 24-hour food availability.",
+    "category_tags": [
+      "activity",
+      "cafe"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "aesthetic"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "late_night"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  },
+  {
+    "venue_id": 211,
+    "rejected": false,
+    "summary": "A popular gaming zone and cafe offering a wide range of video games, pool/snooker, and a friendly atmosphere for gamers, with reasonable prices and an aesthetic vibe.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "family_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 212,
+    "rejected": false,
+    "summary": "A large, well-maintained sports complex offering a wide array of activities like tennis, badminton, squash, swimming, gym, and a popular golf driving range, with in-house eateries and an energetic atmosphere.",
+    "category_tags": [
+      "activity",
+      "restaurant"
+    ],
+    "vibe_tags": [
+      "lively",
+      "casual",
+      "family_friendly",
+      "outdoor"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "outdoor",
+      "indoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 213,
+    "rejected": false,
+    "summary": "A well-maintained sports complex offering extensive facilities for various activities including tennis, badminton, squash, swimming, gym, and jogging, suitable for members and non-members with an entry fee.",
+    "category_tags": [
+      "activity"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "family_friendly"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "indoor",
+      "outdoor"
+    ],
+    "price_tags": [
+      "moderate"
+    ]
+  },
+  {
+    "venue_id": 214,
+    "rejected": false,
+    "summary": "A 24/7 snooker and gaming academy offering pool tables, PS4/PS5 consoles, foosball, and a relaxed environment to hang out with friends, with snacks and beverages available.",
+    "category_tags": [
+      "activity",
+      "arcade"
+    ],
+    "vibe_tags": [
+      "casual",
+      "lively",
+      "group_friendly",
+      "trendy"
+    ],
+    "special_tags": [
+      "group_friendly",
+      "late_night",
+      "indoor"
+    ],
+    "price_tags": [
+      "affordable"
+    ]
+  }
+]

@@ -1,0 +1,28 @@
+# FastAPI and ASGI server
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database and ORM
+sqlmodel==0.0.14
+sqlalchemy==2.0.23
+
+# Data validation and serialization
+pydantic==2.5.0
+
+# HTTP client (for external API calls if needed)
+httpx==0.25.2
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Date/time utilities
+python-dateutil==2.8.2
+
+# JSON utilities (if needed for complex JSON handling)
+orjson==3.9.10
+
+# Development dependencies (optional)
+# pytest==7.4.3
+# pytest-asyncio==0.21.1
+# black==23.11.0
+# flake8==6.1.0
