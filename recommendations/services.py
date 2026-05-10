@@ -1,25 +1,22 @@
 """
-Common utility functions for the Plan Recommendation Engine API
+Business logic services for the Plan Recommendation Engine.
 """
 
 from typing import List, Dict, Optional, Any
-from sqlalchemy.orm import Session
-from models import Venue, Area, Plan, VenuePublic, AreaPublic, PlanPublic
 import json
 import random
-from logger_config import setup_logger
+import logging
+from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights
+from .models import Venue, Area
 
-from constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights
-
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def find_venue_with_retry(db: Session, weighted_tags: Dict[str, float], input_tags: List[str], area_id: int, venue_ids: List[List[int]]) -> Optional[Dict[str, Any]]:
+def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str, List[str]], area_id: int, venue_ids: List[List[int]]) -> Optional[Dict[str, Any]]:
     """
     Find venues by tags with retry logic
     
     Args:
-        db: Database session
         weighted_tags: Dictionary of tags with their weights
         input_tags: List of input tags
         area_id: Area ID to search in
@@ -31,7 +28,7 @@ def find_venue_with_retry(db: Session, weighted_tags: Dict[str, float], input_ta
     retry_count = 0
     while retry_count < 3:
         selected_tags = select_tags_by_weight(weighted_tags, input_tags)
-        venue_id_choices = find_venue_by_tags(db, selected_tags, area_id, venue_ids)
+        venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids)
         
         if venue_id_choices is not None:
             return venue_id_choices
@@ -71,6 +68,7 @@ def assign_weights(tags: Dict[str, List[str]]) -> Dict[str, float]:
     
     return weights
 
+
 def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[str]]) -> Dict[str, str]:
     """
     Randomly select one tag from each category based on weights
@@ -107,6 +105,7 @@ def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[
     
     return selected_tags
 
+
 def score_venues(venues: List[Venue], selected_tags: Dict[str, str]) -> List[tuple]:
     """
     Score venues based on tag matches using weighted scoring
@@ -140,23 +139,23 @@ def score_venues(venues: List[Venue], selected_tags: Dict[str, str]) -> List[tup
     venue_scores.sort(key=lambda x: x[1], reverse=True)
     return venue_scores
 
-def find_venue_by_tags(db: Session, selected_tags: Dict[str, str], area_id: Optional[int] = None, exclude_venue_ids: Optional[List[int]] = None) -> Optional[Dict]:
+
+def find_venue_by_tags(selected_tags: Dict[str, str], area_id: Optional[int] = None, exclude_venue_ids: Optional[List[int]] = None) -> Optional[Dict]:
     """
     Find venues that match the selected tags
     
     Args:
-        db: Database session
         selected_tags: Dictionary with one selected tag per category
         area_id: Optional area ID to filter by
         
     Returns:
         Dictionary with selected venues, their scores, and highest score, or None
     """
-    query = db.query(Venue).filter(Venue.area_id == area_id)
+    query = Venue.objects.filter(area_id=area_id)
     
     if exclude_venue_ids:
         flat_exclude_ids = [venue_id for stage_venues in exclude_venue_ids for venue_id in stage_venues]
-        query = query.filter(~Venue.id.in_(flat_exclude_ids))
+        query = query.exclude(id__in=flat_exclude_ids)
     
     venues = query.all()
     
@@ -192,7 +191,7 @@ def find_venue_by_tags(db: Session, selected_tags: Dict[str, str], area_id: Opti
     for venue_id in selected_venues:
         for vid, score in shortlist:
             if vid == venue_id:
-                venue = db.query(Venue).filter(Venue.id == venue_id).first()
+                venue = Venue.objects.filter(id=venue_id).first()
                 if venue:
                     venue_data = {
                         "id": venue.id,
@@ -211,12 +210,12 @@ def find_venue_by_tags(db: Session, selected_tags: Dict[str, str], area_id: Opti
         "highest_score": highest_score
     }
 
-def generate_plan(db: Session, weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] = None, num_recommendations: int = 3) -> Dict:
+
+def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] = None, num_recommendations: int = 3) -> Dict:
     """
     Generate a plan with multiple venue recommendations
     
     Args:
-        db: Database session
         weighted_tags: Dictionary of weighted tags
         input_tags: Dictionary of user input tags
         area_id: Optional area ID to filter by
@@ -233,14 +232,14 @@ def generate_plan(db: Session, weighted_tags: Dict, input_tags: Dict, area_id: O
         logger.info(f"[generate_plan] Generating plan for stage {i+1}")
         switching_venues = random.random() < venue_switch_chance
         if switching_venues and i>0:
-            area_obj = db.query(Area).filter(Area.id == area_id).first()
+            area_obj = Area.objects.filter(id=area_id).first()
             connected_area_ids = area_obj.get_connected_areas()
             if connected_area_ids:
                 new_area_id = random.choice(connected_area_ids)
                 logger.info(f"[generate_plan] Switching areas for stage {i+1} from {area_id} to {new_area_id}")
                 area_id = new_area_id
                 venue_switch_chance = 0
-        venue_id_choices = find_venue_with_retry(db, weighted_tags, input_tags, area_id, venue_ids)
+        venue_id_choices = find_venue_with_retry(weighted_tags, input_tags, area_id, venue_ids)
         
         if venue_id_choices is None:
             continue
@@ -253,4 +252,3 @@ def generate_plan(db: Session, weighted_tags: Dict, input_tags: Dict, area_id: O
         "venue_ids": venue_ids,
         "venue_data": [[venue['name'] for venue in venue_data[i]] for i in range(len(venue_data))]
     }
-
