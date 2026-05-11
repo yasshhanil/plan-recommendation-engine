@@ -11,7 +11,7 @@ from django.db import transaction
 import json
 import logging
 
-from .services import (
+from .functions import (
     assign_weights,
     generate_plan
 )

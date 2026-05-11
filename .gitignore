@@ -2,3 +2,14 @@
 __pycache__/
 *.pyc
 .env
+
+# Database files
+db.sqlite3
+temp_dump.sql
+
+# API and data population directories
+api_engine/
+data_population/
+
+# Management commands (except functions.py)
+recommendations/management/
