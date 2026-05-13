@@ -55,3 +55,7 @@ tag_decay_chart = {
         'price_tags': 1.0
     }
 }
+
+GOOGLE_PLACES_API_KEY = "YOUR_GOOGLE_PLACES_API_KEY"  
+GOOGLE_PLACES_PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
+MAX_IMAGE_WIDTH = 400  

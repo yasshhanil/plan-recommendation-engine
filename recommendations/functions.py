@@ -1,12 +1,39 @@
 import random
 import json
 import logging
+import httpx
 from typing import Dict, List, Optional, Any
 from django.db.models import Q, Count, Avg
 from .models import Venue, Area, TAGS_CONSTANT
 from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+
+
+def fetch_google_places_image_url(photo_name: str, max_width: int = 400) -> Optional[str]:
+    """
+    Generate Google Places API (New) photo media URL
+    """
+
+    api_key = settings.GOOGLE_PLACES_API_KEY
+
+    if not photo_name:
+        return None
+
+    try:
+        image_url = (
+            f"https://places.googleapis.com/v1/"
+            f"{photo_name}/media"
+            f"?maxWidthPx={max_width}"
+            f"&key={api_key}"
+        )
+
+        return image_url
+
+    except Exception as e:
+        logger.error(f"Error generating image URL: {str(e)}")
+        return None
 
 
 def assign_weights(tags: Dict[str, List[str]]) -> Dict[str, float]:
@@ -58,7 +85,8 @@ def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] 
     venue_switch_chance = VENUE_SWITCH_PROBABILITY
     for i in range(num_recommendations):
         logger.info(f"[generate_plan] Generating plan for stage {i+1}")
-        area_id, venue_switch_chance = area_switcher(area_id, venue_switch_chance, i+1)
+        if i > 0:
+            area_id, venue_switch_chance = area_switcher(area_id, venue_switch_chance, i+1)
         venue_id_choices = find_venue_with_retry(weighted_tags, input_tags, area_id, venue_ids)
         
         if venue_id_choices is None:
@@ -70,7 +98,7 @@ def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] 
     
     return {
         "venue_ids": venue_ids,
-        "venue_data": [[venue['name'] for venue in venue_data[i]] for i in range(len(venue_data))]
+        "venue_data": venue_data
     }
 
 
@@ -228,9 +256,18 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
             if vid == venue_id:
                 venue = Venue.objects.filter(id=venue_id).first()
                 if venue:
+                    venue_tags = json.loads(venue.tags) if venue.tags else {"category_tags": [], "vibe_tags": [], "special_tags": [], "price_tags": []}
+                    image_url = fetch_google_places_image_url(venue.photo_reference)
+                    
                     venue_data = {
                         "id": venue.id,
-                        "name": venue.name,
+                        "title": venue.name,
+                        "summary": venue.summary,
+                        "tags": venue_tags,
+                        "address": venue.formatted_address,
+                        "google_maps_uri": venue.google_maps_uri,
+                        "google_image_code": venue.photo_reference,
+                        "image_url": image_url,  
                         "score": score,
                     }
                     selected_with_scores.append(venue_data)
