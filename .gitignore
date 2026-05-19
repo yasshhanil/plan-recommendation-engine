@@ -12,4 +12,4 @@ api_engine/
 data_population/
 
 # Management commands (except functions.py)
-recommendations/management/
+# recommendations/management/

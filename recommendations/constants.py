@@ -5,9 +5,11 @@ Constants for the Plan Recommendation Engine
 VENUE_SWITCH_PROBABILITY = 0.22
 
 CATEGORY_TAGS = [
-    'cafe', 'restaurant', 'dessert', 'bar', 'activity', 
-    'arcade', 'cinema', 'park', 'shopping'
+    'cafe', 'restaurant', 'dessert', 'bar', 'activity', 'shopping'
 ]
+
+# Internal tags (not user-facing)
+INTERNAL_CATEGORY_TAGS = ['arcade', 'cinema', 'park']
 
 VIBE_TAGS = [
     'cozy', 'fancy', 'aesthetic', 'casual', 'lively', 
@@ -20,7 +22,7 @@ SPECIAL_TAGS = ['date_spot', 'group_friendly',
 PRICE_TAGS = ['affordable', 'moderate', 'upscale']
 
 TAGS_CONSTANT = {
-    'category_tags': CATEGORY_TAGS,
+    'category_tags': CATEGORY_TAGS + INTERNAL_CATEGORY_TAGS,
     'vibe_tags': VIBE_TAGS,
     'special_tags': SPECIAL_TAGS,
     'price_tags': PRICE_TAGS
@@ -56,6 +58,6 @@ tag_decay_chart = {
     }
 }
 
-GOOGLE_PLACES_API_KEY = "YOUR_GOOGLE_PLACES_API_KEY"  
+GOOGLE_PLACES_API_KEY = "YOUR_GOOGLE_PLACES_API_KEY"
 GOOGLE_PLACES_PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
 MAX_IMAGE_WIDTH = 400  

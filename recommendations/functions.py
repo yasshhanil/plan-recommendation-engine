@@ -36,6 +36,42 @@ def fetch_google_places_image_url(photo_name: str, max_width: int = 400) -> Opti
         return None
 
 
+def ensure_category_tags_prioritized(template_weights: Dict, input_tags: Dict) -> Dict:
+    """
+    Ensure input category tags are prioritized in stage_1 weights.
+    If input category tags are missing or not in top 2, make them the highest weight.
+    
+    Args:
+        template_weights: Template stage weights dictionary
+        input_tags: User input tags dictionary
+        
+    Returns:
+        Adjusted template weights dictionary
+    """
+    stage_1_weights = template_weights.get('stage_1', {})
+    stage_1_category_weights = stage_1_weights.get('category_tags', {})
+    input_category_tags = input_tags.get('category_tags', [])
+    
+    sorted_stage_1 = sorted(stage_1_category_weights.items(), key=lambda x: x[1], reverse=True)
+    top_2_tags = [tag for tag, _ in sorted_stage_1[:2]]
+    
+    needs_adjustment = False
+    for cat_tag in input_category_tags:
+        if cat_tag not in stage_1_category_weights or cat_tag not in top_2_tags:
+            needs_adjustment = True
+            break
+    
+    if needs_adjustment:
+        logger.info(f"Adjusting stage_1 category weights to prioritize input category tags: {input_category_tags}")
+        max_weight = max(stage_1_category_weights.values()) if stage_1_category_weights else 1.0
+        for cat_tag in input_category_tags:
+            stage_1_category_weights[cat_tag] = max_weight + 1.0
+        stage_1_weights['category_tags'] = stage_1_category_weights
+        template_weights['stage_1'] = stage_1_weights
+    
+    return template_weights
+
+
 def assign_weights(tags: Dict[str, List[str]]) -> Dict[str, float]:
     """
     Assign weights to tags based on their importance
@@ -66,7 +102,7 @@ def assign_weights(tags: Dict[str, List[str]]) -> Dict[str, float]:
     return weights
 
 
-def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] = None, num_recommendations: int = 3) -> Dict:
+def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] = None, num_recommendations: int = 3, template_id: Optional[str] = None) -> Dict:
     """
     Generate a plan with multiple venue recommendations
     
@@ -101,6 +137,46 @@ def generate_plan(weighted_tags: Dict, input_tags: Dict, area_id: Optional[int] 
         "venue_data": venue_data
     }
 
+
+def generate_plan_from_template(weighted_template_tags: Dict, input_tags: Dict, area_id: Optional[int] = None, num_recommendations: int = 3, template_id: Optional[str] = None) -> Dict:
+    """
+    Generate a plan with multiple venue recommendations
+    
+    Args:
+        weighted_template_tags: Dictionary of weighted template tags
+        input_tags: Dictionary of user input tags
+        area_id: Optional area ID to filter by
+        num_recommendations: Number of venue recommendations to generate
+        
+    Returns:
+        Dictionary with venue IDs and comprehensive venue data
+    """
+    
+    venue_ids = []
+    venue_data = []
+    venue_switch_chance = VENUE_SWITCH_PROBABILITY
+    for i in range(num_recommendations):
+        stage_key = f"stage_{i+1}"
+        stage_weights = weighted_template_tags.get(stage_key, {})
+        # print(f"[generate_plan_from_template] Stage {i+1} weights: {stage_weights}")
+        print(f"[generate_plan_from_template] Generating plan for stage {i+1}")
+
+        if i > 0:
+            area_id, venue_switch_chance = area_switcher(area_id, venue_switch_chance, i+1)
+
+
+        venue_id_choices = find_venue_with_retry(stage_weights, input_tags, area_id, venue_ids)
+        if venue_id_choices is None:
+            continue
+        
+        selected_venue_ids = [venue["id"] for venue in venue_id_choices["selected_venues"]]
+        venue_ids.append(selected_venue_ids)
+        venue_data.append(venue_id_choices["selected_venues"])
+    
+    return {
+        "venue_ids": venue_ids,
+        "venue_data": venue_data
+    }
 
 def area_switcher(area_id: int, venue_switch_chance: float, stage: int) -> tuple[int, float]:
     """
@@ -143,7 +219,7 @@ def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str,
     """
     retry_count = 0
     while retry_count < 3:
-        selected_tags = select_tags_by_weight(weighted_tags, input_tags)
+        selected_tags = select_tags_by_weight(weighted_tags, input_tags, apply_decay=False)
         venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids)
         
         if venue_id_choices is not None:
@@ -155,7 +231,7 @@ def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str,
     return None
 
 
-def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[str]]) -> Dict[str, str]:
+def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[str]], apply_decay: bool = True) -> Dict[str, str]:
     """
     Randomly select one tag from each category based on weights
     
@@ -179,11 +255,14 @@ def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[
             selected_tag_weight = weights[tag_type][selected_tag]
             
             user_tags = input_tags.get(tag_type, [])
-            if selected_tag in user_tags:
+            if apply_decay and selected_tag in user_tags:
                 decay_rate = tag_decay_chart['user_selected'][tag_type]
                 weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
                 logger.info("[select_tags_by_weight] Applied decay to user selected tag {}".format(selected_tag))
-            else:
+            elif apply_decay:
+                decay_rate = tag_decay_chart['random_selected'][tag_type]
+                weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
+                logger.info("[select_tags_by_weight] Applied decay to random selected tag {}".format(selected_tag))
                 decay_rate = tag_decay_chart['random_selected'][tag_type]
                 weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
                 logger.info("[select_tags_by_weight] Applied decay to random selected tag {}".format(selected_tag))
@@ -249,6 +328,9 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                 selected_venues.append(selected_venue)
                 logger.info("[select_scored_venues] Selected venue {} with score {} from part {}".format(selected_venue, dict(part_venue_subset)[selected_venue], part))
                 del dict(part_venue_subset)[selected_venue]
+    else:
+        selected_venues = venue_score_ids
+                
 
     selected_with_scores = []
     for venue_id in selected_venues:
