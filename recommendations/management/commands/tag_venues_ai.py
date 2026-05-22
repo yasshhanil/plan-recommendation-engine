@@ -83,7 +83,7 @@ class VenueAIAnalyzer:
                 return []
             
             # Process venues in batches
-            batch_size = 5  # Reduced from 10 to avoid timeouts
+            batch_size = 10  # Reduced from 10 to avoid timeouts
             all_results = []
             
             for i in range(0, len(venues), batch_size):

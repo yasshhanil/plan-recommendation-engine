@@ -155,26 +155,24 @@ def generate_plan_from_template(weighted_template_tags: Dict, input_tags: Dict, 
     venue_ids = []
     venue_data = []
     venue_switch_chance = VENUE_SWITCH_PROBABILITY
+    area_name = Area.objects.get(id=area_id).name
     for i in range(num_recommendations):
         stage_key = f"stage_{i+1}"
         stage_weights = weighted_template_tags.get(stage_key, {})
-        # print(f"[generate_plan_from_template] Stage {i+1} weights: {stage_weights}")
-        print(f"[generate_plan_from_template] Generating plan for stage {i+1}")
+        logger.info(f"[generate_plan_from_template] Generating plan for stage {i+1}")
 
         if i > 0:
             area_id, venue_switch_chance = area_switcher(area_id, venue_switch_chance, i+1)
+            area_name = Area.objects.get(id=area_id).name
 
 
         venue_id_choices = find_venue_with_retry(stage_weights, input_tags, area_id, venue_ids)
         if venue_id_choices is None:
             continue
         
-        selected_venue_ids = [venue["id"] for venue in venue_id_choices["selected_venues"]]
-        venue_ids.append(selected_venue_ids)
-        venue_data.append(venue_id_choices["selected_venues"])
+        venue_data.append((venue_id_choices["selected_venues"], area_name))
     
     return {
-        "venue_ids": venue_ids,
         "venue_data": venue_data
     }
 
@@ -219,7 +217,8 @@ def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str,
     """
     retry_count = 0
     while retry_count < 3:
-        selected_tags = select_tags_by_weight(weighted_tags, input_tags, apply_decay=False)
+        selected_tags = select_tags_by_weight(weighted_tags, input_tags)
+        logger.info(f"[find_venue_with_retry] selected_tags: {selected_tags}")
         venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids)
         
         if venue_id_choices is not None:
@@ -258,14 +257,9 @@ def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[
             if apply_decay and selected_tag in user_tags:
                 decay_rate = tag_decay_chart['user_selected'][tag_type]
                 weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
-                logger.info("[select_tags_by_weight] Applied decay to user selected tag {}".format(selected_tag))
             elif apply_decay:
                 decay_rate = tag_decay_chart['random_selected'][tag_type]
                 weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
-                logger.info("[select_tags_by_weight] Applied decay to random selected tag {}".format(selected_tag))
-                decay_rate = tag_decay_chart['random_selected'][tag_type]
-                weights[tag_type][selected_tag] = selected_tag_weight * decay_rate
-                logger.info("[select_tags_by_weight] Applied decay to random selected tag {}".format(selected_tag))
             
             selected_tags[tag_type] = selected_tag
     
@@ -350,7 +344,7 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                         "google_maps_uri": venue.google_maps_uri,
                         "google_image_code": venue.photo_reference,
                         "image_url": image_url,  
-                        "score": score,
+                        "score": score
                     }
                     selected_with_scores.append(venue_data)
                 break

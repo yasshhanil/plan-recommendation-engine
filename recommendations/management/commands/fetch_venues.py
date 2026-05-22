@@ -12,14 +12,14 @@ from django.conf import settings
 from recommendations.models import Venue, Area, ApiQuery, TAG_STRUCTURE, validate_tags, tags_to_json
 
 # Global area and state variables
-AREA_NAME = 'Majnu ka Tila'
-STATE_NAME = 'Delhi'
+AREA_NAME = 'Koramangala'
+STATE_NAME = 'Bengaluru'
 
 # Test region
 TEST_LOCATION = {
     'name': AREA_NAME,
-    'lat': 28.7026021,
-    'lng': 77.2283847,
+    'lat': 12.9352,
+    'lng': 77.6245,
     'radius': 3000  # 3km radius
 }
 
@@ -86,7 +86,7 @@ class DataFetcher:
             lat=TEST_LOCATION['lat'],
             lng=TEST_LOCATION['lng'],
             country='India',
-            state='Delhi',
+            state=STATE_NAME,
             is_active=True
         )
         print(f"Created area: {area.name}")
@@ -428,15 +428,15 @@ class Command(BaseCommand):
         
         # Fetch venues by category
         all_queries = [
-            # ("CAFES", cafe_queries),
-            # ("RESTAURANTS", restaurant_queries),
-            # ("DESSERTS", dessert_queries),
-            # ("BARS", bar_queries),
+            ("CAFES", cafe_queries),
+            ("RESTAURANTS", restaurant_queries),
+            ("DESSERTS", dessert_queries),
+            ("BARS", bar_queries),
             ("ACTIVITIES", activity_queries),
-            # ("ARCADES", arcade_queries),
-            # ("CINEMAS", cinema_queries),
-            # ("PARKS", park_queries),
-            # ("SHOPPING", shopping_queries)
+            ("ARCADES", arcade_queries),
+            ("CINEMAS", cinema_queries),
+            ("PARKS", park_queries),
+            ("SHOPPING", shopping_queries)
         ]
         
         # Define max venues per query by category
@@ -445,7 +445,7 @@ class Command(BaseCommand):
             "RESTAURANTS": 20,
             "BARS": 20,
             "DESSERTS": 20,
-            "ACTIVITIES": 5,
+            "ACTIVITIES": 20,
             "ARCADES": 20,
             "PARKS": 20,
             "SHOPPING": 20,

@@ -24,7 +24,7 @@ TEMPLATE_PROFILES = {
             "restaurant": 0.30,
             "dessert": 0.20,
             "bar": 0.20,
-            "cafe": 0.20,
+            "cafe": 0.30,
             "shopping": 0.10
         },
         "vibe_weights": {
@@ -338,11 +338,11 @@ def get_confidence_level(top_score: float, margin: float) -> str:
     Returns:
         Confidence level: 'high', 'medium', or 'low'
     """
-    if top_score < 0.18:
+    if top_score < 0.12:
         return 'low'
-    elif margin < 0.03:
+    elif margin < 0.01:
         return 'low'
-    elif margin < 0.07:
+    elif margin < 0.04:
         return 'medium'
     else:
         return 'high'
