@@ -1,12 +1,13 @@
 import random
 import json
 import logging
-import httpx
+import requests
 from typing import Dict, List, Optional, Any
-from django.db.models import Q, Count, Avg
+from google.cloud import storage
+from django.conf import settings
+
 from .models import Venue, Area, TAGS_CONSTANT
 from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,72 @@ def fetch_google_places_image_url(photo_name: str, max_width: int = 400) -> Opti
     except Exception as e:
         logger.error(f"Error generating image URL: {str(e)}")
         return None
+
+
+def bulk_upload_venue_images(venues: List[Venue]) -> Dict[int, Optional[str]]:
+    """
+    Bulk upload images for multiple venues to GCS using batch operations.
+
+    Args:
+        venues: List of Venue objects
+
+    Returns:
+        Dictionary mapping venue_id to GCS image URL (or None if failed)
+    """
+
+    venue_urls = {}
+    client = storage.Client()
+    bucket = client.bucket(settings.GS_BUCKET_NAME)
+
+    blobs_to_check = []
+    for venue in venues:
+        if not venue.photo_reference:
+            venue_urls[venue.id] = None
+            continue
+        gcs_path = f"venue_images/{venue.id}.jpg"
+        blobs_to_check.append((venue, gcs_path))
+
+    existing_venues = set()
+    for venue, gcs_path in blobs_to_check:
+        logger.info(f"[bulk_upload_venue_images] Checking if image exists for {venue.name} at {gcs_path}")
+        blob = bucket.blob(gcs_path)
+        if blob.exists():
+            url = f"{settings.MEDIA_URL}{venue.id}.jpg"
+            venue_urls[venue.id] = url
+            existing_venues.add(venue.id)
+            logger.info(f"[bulk_upload_venue_images] Image already exists for {venue.name}")
+            if venue.image_url != url:
+                venue.image_url = url
+                venue.save(update_fields=['image_url'])
+
+    venues_to_refresh = [v for v in venues if v.id not in existing_venues and v.photo_reference]
+
+    for venue in venues_to_refresh:
+        try:
+            image_url = fetch_google_places_image_url(venue.photo_reference)
+            if not image_url:
+                venue_urls[venue.id] = None
+                continue
+
+            response = requests.get(image_url, timeout=10)
+            if response.status_code == 200:
+                gcs_path = f"venue_images/{venue.id}.jpg"
+                blob = bucket.blob(gcs_path)
+                blob.upload_from_string(response.content, content_type='image/jpeg')
+                url = f"{settings.MEDIA_URL}{venue.id}.jpg"
+                venue_urls[venue.id] = url
+                logger.info(f"[bulk_upload_venue_images] Uploaded image for {venue.name}")
+                # Update venue image_url in database
+                venue.image_url = url
+                venue.save(update_fields=['image_url'])
+            else:
+                logger.error(f"[bulk_upload_venue_images] Failed to fetch for {venue.name}: HTTP {response.status_code}")
+                venue_urls[venue.id] = None
+        except Exception as e:
+            logger.error(f"[bulk_upload_venue_images] Error for {venue.name}: {str(e)}")
+            venue_urls[venue.id] = None
+
+    return venue_urls
 
 
 def ensure_category_tags_prioritized(template_weights: Dict, input_tags: Dict) -> Dict:
@@ -324,7 +391,14 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                 del dict(part_venue_subset)[selected_venue]
     else:
         selected_venues = venue_score_ids
-                
+
+    venues_list = list(Venue.objects.filter(id__in=selected_venues))
+
+    if venues_list:
+        bulk_upload_venue_images(venues_list)
+        venues_list = list(Venue.objects.filter(id__in=selected_venues))
+
+    venue_image_urls = {v.id: v.image_url for v in venues_list}
 
     selected_with_scores = []
     for venue_id in selected_venues:
@@ -333,8 +407,8 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                 venue = Venue.objects.filter(id=venue_id).first()
                 if venue:
                     venue_tags = json.loads(venue.tags) if venue.tags else {"category_tags": [], "vibe_tags": [], "special_tags": [], "price_tags": []}
-                    image_url = fetch_google_places_image_url(venue.photo_reference)
-                    
+                    image_url = venue_image_urls.get(venue_id)
+
                     venue_data = {
                         "id": venue.id,
                         "title": venue.name,
@@ -343,7 +417,7 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                         "address": venue.formatted_address,
                         "google_maps_uri": venue.google_maps_uri,
                         "google_image_code": venue.photo_reference,
-                        "image_url": image_url,  
+                        "image_url": image_url,
                         "score": score
                     }
                     selected_with_scores.append(venue_data)

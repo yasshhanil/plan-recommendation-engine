@@ -34,38 +34,14 @@ class AreaAdmin(admin.ModelAdmin):
 @admin.register(Venue)
 class VenueAdmin(admin.ModelAdmin):
     """Admin configuration for Venue model"""
-    list_display = ['name', 'area', 'rating', 'price_level', 'user_rating_count', 'formatted_address', 'created_at', 'updated_at']
+    list_display = ['name', 'area', 'rating', 'price_level', 'user_rating_count', 'image_url', 'formatted_address', 'created_at', 'updated_at']
     list_filter = ['area', 'price_level', 'rating']
     search_fields = ['name', 'place_id', 'formatted_address']
     readonly_fields = ['created_at', 'updated_at', 'place_id']
     ordering = ['name']
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('area')
-    
-    fieldsets = (
-        ('Basic Info', {
-            'fields': ('name', 'area', 'place_id')
-        }),
-        ('Location & Contact', {
-            'fields': ('lat', 'lng', 'formatted_address', 'google_maps_uri')
-        }),
-        ('Ratings & Pricing', {
-            'fields': ('rating', 'user_rating_count', 'price_level')
-        }),
-        ('Content', {
-            'fields': ('summary', 'photo_reference'),
-            'classes': ('collapse',)
-        }),
-        ('Data Fields', {
-            'fields': ('raw_types', 'reviews', 'tags'),
-            'classes': ('collapse',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
 
 
 @admin.register(Plan)
