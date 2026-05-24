@@ -90,6 +90,7 @@ def template_recommendation(request):
         print("input_tags:", input_tags)
         areas = Area.objects.filter(is_active=True, id__lte=11)
         area_id = random.choice(areas).id if areas else 1
+        area_id = 3
         number_of_stages = 2 
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)

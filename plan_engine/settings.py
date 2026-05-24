@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'storages',
     'recommendations',
 ]
 
@@ -125,6 +126,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+GS_BUCKET_NAME = 'plan-venue-images'
+MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/venue_images/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -162,3 +167,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(
+    BASE_DIR,
+    "gcs-key.json"
+)
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
+    GOOGLE_APPLICATION_CREDENTIALS
+)

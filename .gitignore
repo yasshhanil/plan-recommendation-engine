@@ -11,5 +11,7 @@ temp_dump.sql
 api_engine/
 data_population/
 
+gcs-key.json
+
 # Management commands (except functions.py)
 # recommendations/management/

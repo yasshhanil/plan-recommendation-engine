@@ -79,6 +79,7 @@ class Venue(models.Model):
     formatted_address = models.TextField(null=True, blank=True, help_text="Formatted address of the venue")
     summary = models.TextField(null=True, blank=True, help_text="Venue summary (to be populated manually)")
     tags = models.TextField(null=True, blank=True, help_text="Structured tags as JSON")
+    image_url = models.URLField(max_length=500, null=True, blank=True, help_text="Cached GCS image URL")
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, related_name='venues')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
