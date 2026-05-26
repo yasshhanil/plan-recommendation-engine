@@ -80,6 +80,8 @@ class Venue(models.Model):
     summary = models.TextField(null=True, blank=True, help_text="Venue summary (to be populated manually)")
     tags = models.TextField(null=True, blank=True, help_text="Structured tags as JSON")
     image_url = models.URLField(max_length=500, null=True, blank=True, help_text="Cached GCS image URL")
+    shown_count = models.IntegerField(default=0, help_text="Number of times this venue has been shown")
+    saved_count_this_month = models.IntegerField(default=0, help_text="Number of times this venue has been saved this month")
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, related_name='venues')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -107,24 +109,8 @@ class Venue(models.Model):
 
 
 # ============================================================================
-# PLAN MODELS
+# API QUERY MODELS
 # ============================================================================
-
-class Plan(models.Model):
-    """Database model for Plan."""
-    user_preferences = models.TextField(null=True, blank=True, help_text="User preferences as JSON")
-    area = models.CharField(max_length=255, null=True, blank=True, help_text="Target area name")
-    group_size = models.IntegerField(default=2, help_text="Number of people in group")
-    venues = models.TextField(null=True, blank=True, help_text="Venue IDs in order as JSON")
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        db_table = "plans"
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"Plan {self.id} for {self.area}"
-
 
 class ApiQuery(models.Model):
     """Database model for tracking API queries."""
@@ -193,17 +179,45 @@ def tags_to_json(tags_dict):
 def json_to_tags(tags_json):
     """
     Convert JSON string to tags dictionary.
-    
+
     Args:
         tags_json: JSON string of tags
-        
+
     Returns:
         Tags dictionary, or empty structure if invalid
     """
     if not tags_json:
         return TAG_STRUCTURE.copy()
-    
+
     try:
         return json.loads(tags_json)
     except (json.JSONDecodeError, TypeError):
         return TAG_STRUCTURE.copy()
+
+
+# ============================================================================
+# PLAN MODELS
+# ============================================================================
+
+class Plan(models.Model):
+    """Database model for generated plans."""
+    city = models.CharField(max_length=255, db_index=True, null=True, blank=True, help_text="City name")
+    area = models.JSONField(null=True, blank=True, help_text="Array of area names")
+    ids = models.JSONField(null=True, blank=True, help_text="List of venue IDs in the plan")
+    user_tags = models.JSONField(null=True, blank=True, help_text="User tags used to generate this plan")
+    template_id = models.CharField(max_length=50, null=True, blank=True, help_text="Template name used for this plan")
+    headline = models.TextField(null=True, blank=True, help_text="Generated headline based on template and areas")
+    description = models.TextField(null=True, blank=True, help_text="Generated description based on template and areas")
+    share_image_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the shareable image for this plan")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "plans"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['city']),
+        ]
+
+    def __str__(self):
+        return f"Plan in {self.area}, {self.city}"

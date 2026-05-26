@@ -34,7 +34,7 @@ class AreaAdmin(admin.ModelAdmin):
 @admin.register(Venue)
 class VenueAdmin(admin.ModelAdmin):
     """Admin configuration for Venue model"""
-    list_display = ['name', 'area', 'rating', 'price_level', 'user_rating_count', 'image_url', 'formatted_address', 'created_at', 'updated_at']
+    list_display = ['name', 'area', 'rating', 'price_level', 'user_rating_count', 'shown_count', 'saved_count_this_month', 'image_url', 'formatted_address', 'created_at', 'updated_at']
     list_filter = ['area', 'price_level', 'rating']
     search_fields = ['name', 'place_id', 'formatted_address']
     readonly_fields = ['created_at', 'updated_at', 'place_id']
@@ -47,35 +47,52 @@ class VenueAdmin(admin.ModelAdmin):
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     """Admin configuration for Plan model"""
-    list_display = ['id', 'area', 'group_size', 'venues_display', 'created_at']
-    list_filter = ['area', 'group_size']
-    search_fields = ['area', 'user_preferences']
-    readonly_fields = ['created_at']
+    list_display = ['id', 'city', 'area', 'template_id', 'headline_display', 'ids_display', 'user_tags_display', 'share_image_url_display', 'created_at', 'updated_at']
+    list_filter = ['city', 'area', 'template_id']
+    search_fields = ['city', 'area', 'headline', 'description', 'template_id']
+    readonly_fields = ['created_at', 'updated_at']
     ordering = ['-created_at']
-    
-    def venues_display(self, obj):
-        """Display venues in a readable format"""
-        if obj.venues:
-            try:
-                import json
-                venue_ids = json.loads(obj.venues) if isinstance(obj.venues, str) else obj.venues
-                return f"{len(venue_ids)} venues" if venue_ids else "No venues"
-            except:
-                return str(obj.venues)[:50] + "..." if obj.venues else "No venues"
+
+    def ids_display(self, obj):
+        """Display venue IDs in a readable format"""
+        if obj.ids:
+            return f"{len(obj.ids)} venues" if isinstance(obj.ids, list) else str(obj.ids)[:50]
         return "No venues"
-    venues_display.short_description = 'Venues'
-    
+    ids_display.short_description = 'Venues'
+
+    def user_tags_display(self, obj):
+        """Display user tags in a readable format"""
+        if obj.user_tags:
+            return str(obj.user_tags)[:100] + "..." if len(str(obj.user_tags)) > 100 else str(obj.user_tags)
+        return "No tags"
+    user_tags_display.short_description = 'User Tags'
+
+    def share_image_url_display(self, obj):
+        """Display share image URL"""
+        if obj.share_image_url:
+            return "✓ Generated"
+        return "Not generated"
+    share_image_url_display.short_description = 'Share Image'
+
+    def headline_display(self, obj):
+        """Display headline in a readable format"""
+        if obj.headline:
+            return obj.headline[:80] + "..." if len(obj.headline) > 80 else obj.headline
+        return "No headline"
+    headline_display.short_description = 'Headline'
+
     fieldsets = (
         ('Plan Info', {
-            'fields': ('area', 'group_size')
+            'fields': ('city', 'area')
+        }),
+        ('Template & Content', {
+            'fields': ('template_id', 'headline', 'description')
         }),
         ('Data', {
-            'fields': ('user_preferences', 'venues'),
-            'classes': ('collapse',)
+            'fields': ('ids', 'user_tags', 'share_image_url')
         }),
         ('Timestamps', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
+            'fields': ('created_at', 'updated_at')
         }),
     )
 

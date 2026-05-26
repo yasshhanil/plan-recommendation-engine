@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Share Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            width: 1080px;
+            height: 1920px;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            border-radius: 24px;
+            max-width: 100%;
+            max-height: 100vh;
+            aspect-ratio: 9/16;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: 100%;
+                height: auto;
+                max-height: 90vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .card {
+                max-height: 95vh;
+            }
+        }
+
+        .background-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 95%;
+            height: 95%;
+            object-fit: cover;
+            image-rendering: -webkit-optimize-contrast;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.95) 5%,
+                rgba(0, 0, 0, 0.65) 38%,
+                rgba(0, 0, 0, 0.15) 100%
+            ),
+            linear-gradient(
+                to right,
+                rgba(0, 0, 0, 0.3) 0%,
+                transparent 15%,
+                transparent 85%,
+                rgba(0, 0, 0, 0.3) 100%
+            ),
+            linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.2) 0%,
+                transparent 10%
+            );
+            z-index: 2;
+        }
+
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            z-index: 3;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .content {
+            position: absolute;
+            bottom: clamp(100px, 10vw, 140px);
+            left: 0;
+            z-index: 4;
+            max-width: 55%;
+            padding: 0 clamp(50px, 6vw, 80px);
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: flex-start;
+        }
+
+        .title {
+            color: #FFFFFF;
+            font-size: clamp(36px, 7vw, 72px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: clamp(-1.5px, -0.25vw, -2px);
+            margin-bottom: clamp(16px, 2.5vw, 28px);
+            max-width: 100%;
+            word-break: keep-all;
+            overflow-wrap: normal;
+            white-space: normal;
+            hyphens: none;
+        }
+
+        .subtitle {
+            color: rgba(245, 235, 220, 0.85);
+            font-size: clamp(16px, 2.5vw, 26px);
+            font-weight: 400;
+            margin-bottom: clamp(12px, 2vw, 20px);
+            letter-spacing: 0.3px;
+        }
+
+        .location {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: clamp(12px, 2vw, 20px);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .branding {
+            position: absolute;
+            bottom: clamp(50px, 6vw, 80px);
+            left: clamp(50px, 6vw, 80px);
+            color: rgba(255, 255, 255, 0.35);
+            font-size: clamp(10px, 1.3vw, 12px);
+            font-weight: 400;
+            z-index: 4;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        {% if background_image %}
+        <img class="background-image" src="{{ background_image }}" alt="Background">
+        {% endif %}
+        <div class="overlay"></div>
+        <div class="vignette"></div>
+        <div class="noise"></div>
+
+        <div class="content">
+            <h1 class="title">{{ title }}</h1>
+
+            {% if subtitle %}
+            <p class="subtitle">{{ subtitle }}</p>
+            {% endif %}
+
+            <p class="location">{{ location }}</p>
+        </div>
+
+        <p class="branding">Plan Engine</p>
+    </div>
+</body>
+</html>

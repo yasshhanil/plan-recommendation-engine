@@ -12,14 +12,14 @@ from django.conf import settings
 from recommendations.models import Venue, Area, ApiQuery, TAG_STRUCTURE, validate_tags, tags_to_json
 
 # Global area and state variables
-AREA_NAME = 'Jayanagar'
-STATE_NAME = 'Bengaluru'
+AREA_NAME = 'DUMBO'
+STATE_NAME = 'New York'
 
 # Test region
 TEST_LOCATION = {
     'name': AREA_NAME,
-    'lat': 12.9250,
-    'lng': 77.5938,
+    'lat': 40.7033,
+    'lng': -73.9881,
     'radius': 3000  # 3km radius
 }
 

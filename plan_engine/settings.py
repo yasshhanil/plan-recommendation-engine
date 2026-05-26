@@ -178,3 +178,10 @@ GOOGLE_APPLICATION_CREDENTIALS = os.path.join(
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
     GOOGLE_APPLICATION_CREDENTIALS
 )
+
+# Disable urllib3 debug logs
+import logging
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("google.cloud.storage._opentelemetry_tracing").setLevel(logging.WARNING)
+logging.getLogger("google.auth._default").setLevel(logging.WARNING)
+logging.getLogger("google.auth.transport.requests").setLevel(logging.WARNING)

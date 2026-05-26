@@ -2,7 +2,7 @@
 Django views for the Plan Recommendation Engine API
 """
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -16,11 +16,14 @@ from .functions import (
     assign_weights,
     generate_plan,
     generate_plan_from_template,
-    ensure_category_tags_prioritized
+    ensure_category_tags_prioritized,
+    generate_share_image
 )
-from .models import Area
+from django.template.loader import render_to_string
+from django.db import models as django_models
+from .models import Area, Plan, Venue, TAG_STRUCTURE
 from .templates import select_best_template, get_confidence_level
-from .template_constants import PLAN_STAGE_WEIGHTS_2_STAGE, PLAN_STAGE_WEIGHTS_3_STAGE
+from .template_constants import PLAN_STAGE_WEIGHTS_2_STAGE, PLAN_STAGE_WEIGHTS_3_STAGE, TEMPLATE_COPY
 logger = logging.getLogger(__name__)
 
 
@@ -88,8 +91,9 @@ def template_recommendation(request):
             input_tags = json.loads(tags)
         
         print("input_tags:", input_tags)
-        areas = Area.objects.filter(is_active=True, id__lte=11)
-        area_id = random.choice(areas).id if areas else 1
+        areas = Area.objects.filter(is_active=True, state='New York')
+        area_id = random.choice(areas).id 
+        area_id = 23
         number_of_stages = 2 
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
@@ -119,8 +123,280 @@ def template_recommendation(request):
             "confidence_level": confidence_level,
             "template_score": template_score,
             "template_id": template_id,
-            "venue_data": plan_result.get("venue_data", [])
+            "venue_data": plan_result.get('venue_data',{}),
+            "state": plan_result.get('state', '')
         }
 
         return JsonResponse(result)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+
+@csrf_exempt
+def save_plan(request):
+    """Save a plan endpoint"""
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+        except:
+            body = {}
+
+        ids = body.get('ids', [])
+        city = body.get('city', None)
+        areas = list(set(body.get('area', [])))  # Remove duplicates
+        user_tags = body.get('user_tags', {})
+        state = body.get('state', None)
+
+        if not ids or not city or not areas:
+            return JsonResponse({"error": "Missing required fields: ids, city, area"}, status=400)
+
+        # Extract tags from venues to calculate best template
+        venues = Venue.objects.filter(id__in=ids)
+        aggregated_tags = TAG_STRUCTURE.copy()
+
+        for venue in venues:
+            if venue.tags:
+                try:
+                    venue_tags = json.loads(venue.tags)
+                    # Aggregate tags from all venues
+                    for tag_type, tags_list in venue_tags.items():
+                        if isinstance(tags_list, list):
+                            for tag in tags_list:
+                                if tag not in aggregated_tags[tag_type]:
+                                    aggregated_tags[tag_type].append(tag)
+                except:
+                    pass
+
+        # Calculate best template based on aggregated venue tags
+        template_id = None
+        headline = None
+        description = None
+        if venues.exists():
+            try:
+                template_id, template_score, confidence_score, all_scores = select_best_template(aggregated_tags)
+
+                # Generate headline and description based on template and areas
+                if template_id and template_id in TEMPLATE_COPY:
+                    if 'titles' in TEMPLATE_COPY[template_id]:
+                        title_options = TEMPLATE_COPY[template_id]['titles']
+                        headline_template = random.choice(title_options)
+
+                        # Use first area for single-area style headlines
+                        headline = headline_template.format(area=areas[0] if areas else city)
+
+                    if 'descriptions' in TEMPLATE_COPY[template_id]:
+                        description_options = TEMPLATE_COPY[template_id]['descriptions']
+                        description = random.choice(description_options)
+
+            except Exception as e:
+                logger.warning(f"Failed to calculate template, headline, or description for plan: {e}")
+
+        plan = Plan.objects.create(
+            city=city,
+            area=areas,
+            ids=ids,
+            user_tags=user_tags,
+            template_id=template_id,
+            headline=headline,
+            description=description
+        )
+
+        if ids:
+            Venue.objects.filter(id__in=ids).update(saved_count_this_month=django_models.F('saved_count_this_month') + 1)
+
+        # Generate shareable image
+        share_image_url = generate_share_image(ids, city, areas, plan.id, state, headline)
+        if share_image_url:
+            plan.share_image_url = share_image_url
+            plan.save()
+
+        return JsonResponse({
+            "success": True,
+            "plan_id": plan.id,
+            "template_id": template_id,
+            "headline": headline,
+            "description": description,
+            "share_image_url": share_image_url,
+            "message": "Plan saved successfully"
+        })
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def get_plans(request):
+    """Get all plans endpoint"""
+    if request.method == 'GET':
+        plans = Plan.objects.all().order_by('-created_at')
+        plans_data = []
+        for plan in plans:
+            plans_data.append({
+                "id": plan.id,
+                "city": plan.city,
+                "area": plan.area,
+                "venue_ids": plan.ids,
+                "user_tags": plan.user_tags,
+                "template_id": plan.template_id,
+                "headline": plan.headline,
+                "description": plan.description,
+                "share_image_url": plan.share_image_url,
+                "created_at": plan.created_at.isoformat() if plan.created_at else None,
+                "updated_at": plan.updated_at.isoformat() if plan.updated_at else None
+            })
+
+        return JsonResponse({
+            "success": True,
+            "plans": plans_data,
+            "count": len(plans_data)
+        })
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def get_venues_by_ids(request):
+    """Get venue data by IDs endpoint"""
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+        except:
+            body = {}
+
+        venue_ids = body.get('ids', [])
+
+        if not venue_ids:
+            return JsonResponse({"error": "Missing required field: ids"}, status=400)
+
+        venues = Venue.objects.filter(id__in=venue_ids)
+        venues_data = []
+
+        for venue in venues:
+            venue_tags = json.loads(venue.tags) if venue.tags else {"category_tags": [], "vibe_tags": [], "special_tags": [], "price_tags": []}
+
+            venue_data = {
+                "id": venue.id,
+                "title": venue.name,
+                "summary": venue.summary,
+                "tags": venue_tags,
+                "address": venue.formatted_address,
+                "google_maps_uri": venue.google_maps_uri,
+                "google_image_code": venue.photo_reference,
+                "image_url": venue.image_url,
+                "lat": venue.lat,
+                "lng": venue.lng,
+                "rating": venue.rating,
+                "price_level": venue.price_level,
+                "user_rating_count": venue.user_rating_count
+            }
+            venues_data.append(venue_data)
+
+        return JsonResponse({
+            "success": True,
+            "venues": venues_data,
+            "count": len(venues_data)
+        })
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def preview_share_card(request):
+    """Preview share card design in browser using existing plan data"""
+    if request.method == 'GET':
+        plan_id = request.GET.get('plan_id')
+        if plan_id:
+            plan = Plan.objects.filter(id=plan_id).first()
+        else:
+            plan = Plan.objects.order_by('-created_at').first()
+
+        if not plan:
+            return JsonResponse({"error": "No plans found in database"}, status=404)
+
+        venues = Venue.objects.filter(id__in=plan.ids).order_by('-rating') if plan.ids else []
+
+        venue_images = [venue.image_url for venue in venues if venue.image_url]
+        background_image = venue_images[0] if venue_images else None
+
+        category_mapping = {
+            'cafe': 'Coffee',
+            'bar': 'Cocktails',
+            'restaurant': 'Dinner',
+            'dessert': 'Dessert',
+            'activity': 'Live',
+            'entertainment': 'Shows',
+            'shopping': 'Shopping'
+        }
+
+        categories = []
+        for venue in venues:
+            if venue.tags:
+                try:
+                    tags = json.loads(venue.tags)
+                    cat_tags = tags.get('category_tags', [])
+                    if cat_tags:
+                        categories.extend(cat_tags[:1])
+                except:
+                    pass
+        categories = list(dict.fromkeys(categories))
+
+        # Map categories to human-friendly names
+        human_categories = [category_mapping.get(cat, cat.capitalize()) for cat in categories[:4]]
+        subtitle = ' • '.join(human_categories) if human_categories else None
+
+        # Build location string with city
+        area_str = ', '.join(plan.area) if isinstance(plan.area, list) else str(plan.area)
+        if plan.city:
+            location = f"{area_str}, {plan.city}"
+        else:
+            location = area_str
+
+        # Use headline if available, otherwise generate title
+        if plan.headline:
+            title = plan.headline
+        elif plan.city:
+            # Generate contextual title based on categories
+            if 'bar' in categories or 'nightlife' in categories:
+                titles = [
+                    f"Late Hours in {plan.city}",
+                    f"Cocktails After Dark",
+                    f"The Night Opens Up Here",
+                    f"Drinks & Conversation",
+                ]
+            elif 'restaurant' in categories or 'cafe' in categories:
+                titles = [
+                    f"A Slower Night in {plan.city}",
+                    f"Evening That Builds Slowly",
+                    f"Dinner & Conversation",
+                    f"Quiet Hours in {plan.city}",
+                ]
+            elif 'activity' in categories or 'entertainment' in categories:
+                titles = [
+                    f"An Evening to Remember",
+                    f"Live & Unforgettable",
+                    f"Tonight in {plan.city}",
+                    f"The Night Comes Alive",
+                ]
+            else:
+                titles = [
+                    f"Evening in {plan.city}",
+                    f"Tonight in {plan.city}",
+                    f"A Night in {plan.city}",
+                    f"After Hours in {plan.city}",
+                ]
+
+            # Select title based on plan id for consistency
+            title = titles[plan.id % len(titles)]
+        else:
+            title = "Your Plan"
+
+        # Render HTML template
+        html_content = render_to_string('share_card.html', {
+            'background_image': background_image,
+            'title': title,
+            'subtitle': subtitle,
+            'location': location,
+        })
+
+        return HttpResponse(html_content, content_type='text/html')
+
     return JsonResponse({"error": "Method not allowed"}, status=405)
