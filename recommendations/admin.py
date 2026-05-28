@@ -3,20 +3,33 @@ Django admin configuration for recommendations app
 """
 
 from django.contrib import admin
-from .models import Area, Venue, Plan, ApiQuery
+from .models import Country, City, Area, Venue, Plan, ApiQuery
+
+
+@admin.register(Country)
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'code', 'timezone', 'currency']
+    search_fields = ['name', 'code']
+
+
+@admin.register(City)
+class CityAdmin(admin.ModelAdmin):
+    list_display = ['name', 'country', 'state', 'is_active']
+    list_filter = ['country', 'is_active']
+    search_fields = ['name', 'state']
 
 
 @admin.register(Area)
 class AreaAdmin(admin.ModelAdmin):
     """Admin configuration for Area model"""
-    list_display = ['name', 'country', 'state', 'is_active', 'connected_areas', 'created_at', 'updated_at']
-    list_filter = ['is_active', 'country', 'state']
-    search_fields = ['name', 'country', 'state']
+    list_display = ['name', 'city', 'is_active', 'created_at']
+    list_filter = ['is_active', 'city__country']
+    search_fields = ['name', 'city__name']
     readonly_fields = ['created_at', 'updated_at']
     ordering = ['name']
     fieldsets = (
         ('Basic Info', {
-            'fields': ('name', 'country', 'state', 'is_active')
+            'fields': ('name', 'city', 'is_active')
         }),
         ('Location', {
             'fields': ('lat', 'lng')

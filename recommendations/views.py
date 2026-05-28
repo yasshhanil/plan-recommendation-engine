@@ -94,9 +94,9 @@ def template_recommendation(request):
             input_tags = json.loads(tags)
         
         print("input_tags:", input_tags)
-        areas = Area.objects.filter(is_active=True, state='New York')
+        areas = Area.objects.filter(is_active=True)
         area_id = random.choice(areas).id 
-        area_id = 23
+        area_id = 1
         number_of_stages = 2
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)

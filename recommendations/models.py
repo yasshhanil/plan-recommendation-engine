@@ -25,37 +25,65 @@ TAG_STRUCTURE = {
 # AREA MODELS
 # ============================================================================
 
+class Country(models.Model):
+    name = models.CharField(max_length=255, unique=True, db_index=True)
+    code = models.CharField(max_length=2, unique=True, help_text="ISO 3166-1 alpha-2 code, e.g. GB")
+    timezone = models.CharField(max_length=100, null=True, blank=True, help_text="e.g. Europe/London")
+    currency = models.CharField(max_length=10, null=True, blank=True, help_text="e.g. GBP")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "countries"
+        ordering = ['name']
+        verbose_name_plural = "countries"
+
+    def __str__(self):
+        return self.name
+
+
+class City(models.Model):
+    name = models.CharField(max_length=255, db_index=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
+    state = models.CharField(max_length=255, null=True, blank=True, help_text="State/province/region")
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "cities"
+        ordering = ['name']
+        unique_together = [('name', 'country')]
+
+    def __str__(self):
+        return f"{self.name}, {self.country.name}"
+
+
 class Area(models.Model):
     """Database model for Area."""
-    name = models.CharField(max_length=255, unique=True, db_index=True, help_text="Unique area name")
+    name = models.CharField(max_length=255, db_index=True, help_text="Area/neighbourhood name")
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True, related_name='areas')
     lat = models.FloatField(null=True, blank=True, help_text="Latitude coordinate")
     lng = models.FloatField(null=True, blank=True, help_text="Longitude coordinate")
     is_active = models.BooleanField(default=True, help_text="Whether area is active")
-    country = models.CharField(max_length=255, null=True, blank=True, help_text="Country name")
-    state = models.CharField(max_length=255, null=True, blank=True, help_text="State/region name")
     connected_areas = models.TextField(null=True, blank=True, help_text="Connected areas as JSON list")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = "areas"
         ordering = ['name']
-    
+        unique_together = [('name', 'city')]
+
     def get_connected_areas(self):
-        """
-        Parse and return connected areas as a list of strings.
-        
-        Returns:
-            List of connected area names, or empty list if no connected areas
-        """
         if not self.connected_areas:
             return []
-        
         try:
             return json.loads(self.connected_areas)
         except (json.JSONDecodeError, TypeError):
             return []
-    
+
     def __str__(self):
         return self.name
 

@@ -85,8 +85,6 @@ class DataFetcher:
             name=TEST_LOCATION['name'],
             lat=TEST_LOCATION['lat'],
             lng=TEST_LOCATION['lng'],
-            country='India',
-            state=STATE_NAME,
             is_active=True
         )
         print(f"Created area: {area.name}")

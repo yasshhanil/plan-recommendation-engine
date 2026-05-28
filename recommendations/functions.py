@@ -295,9 +295,9 @@ def generate_plan_from_template(weighted_template_tags: Dict, input_tags: Dict, 
     selected_tags_list = []
     previous_selected_tags = None
     venue_switch_chance = VENUE_SWITCH_PROBABILITY
-    area = Area.objects.only('name','state').get(id=area_id)
+    area = Area.objects.select_related('city').get(id=area_id)
     area_name = area.name
-    state = area.state
+    state = area.city.state if area.city else ''
     for i in range(num_recommendations):
         stage_key = f"stage_{i+1}"
         stage_weights = weighted_template_tags.get(stage_key, {})
@@ -442,7 +442,7 @@ def find_venue_by_tags(selected_tags: Dict[str, str], area_id: Optional[int] = N
 
     special_tags_filtered = filter_based_on_special_tags(venues, input_tags)
     venue_scores = score_venues(special_tags_filtered, selected_tags)
-    
+
     if not venue_scores:
         return None
 
@@ -459,13 +459,7 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
     Returns:
         Dictionary with selected venues and highest score
     """
-    if len(venue_scores) <= 3:
-        shortlist = venue_scores
-    else:
-        shortlist_size = max(4, min(16, int(len(venue_scores) * 0.6)))
-        shortlist = venue_scores[:shortlist_size]
-    
-    venue_score_ids, venue_score_values = zip(*shortlist)
+    venue_score_ids, venue_score_values = zip(*venue_scores)
     venue_scores_len = len(venue_score_ids)
     selected_venues = []
     if venue_scores_len >=3:
@@ -519,7 +513,7 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
                     selected_with_scores.append(venue_data)
                 break
     
-    logger.info("[select_scored_venues] Total venues in shortlist: {}".format(len(shortlist)))
+    logger.info("[select_scored_venues] Total venues in shortlist: {}".format(len(venue_scores)))
     
     return {
         "selected_venues": selected_with_scores,
