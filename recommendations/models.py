@@ -7,6 +7,7 @@ This module defines all database models for managing venues, areas, and plans wi
 from django.db import models
 from django.core.exceptions import ValidationError
 import json
+import uuid
 from datetime import datetime
 
 from .constants import CATEGORY_TAGS, VIBE_TAGS, SPECIAL_TAGS, PRICE_TAGS, TAGS_CONSTANT
@@ -209,6 +210,7 @@ class Plan(models.Model):
     headline = models.TextField(null=True, blank=True, help_text="Generated headline based on template and areas")
     description = models.TextField(null=True, blank=True, help_text="Generated description based on template and areas")
     share_image_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL of the shareable image for this plan")
+    share_token = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

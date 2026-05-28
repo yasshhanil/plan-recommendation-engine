@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan - {{ plan.city }}</title>
+  <style>
+    :root {
+      --bg: #0B0B0F;
+      --elevated: #15161B;
+      --card: #1C1E24;
+      --input-surface: #23262F;
+      --accent: #7C5CFF;
+      --success: #4ADE80;
+      --warning: #FACC15;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B7BCC7;
+      --text-muted: #7D8594;
+      --radius-card: 24px;
+      --radius-pill: 999px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text-primary);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+
+    /* ── Header ── */
+    .header { padding: 48px 0 24px; }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .main-heading {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .success-badge {
+      display: inline-block;
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 16px;
+    }
+
+    .plan-meta {
+      display: flex;
+      gap: 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .plan-meta-item { display: flex; align-items: center; gap: 5px; }
+
+    /* ── Section heading ── */
+    .section-heading {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    /* ── Opening line ── */
+    .opening-line {
+      background: rgba(124, 92, 255, 0.08);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .opening-closing-text {
+      font-size: 16px;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* ── Stage container ── */
+    .stage-container { margin-bottom: 0; }
+
+    /* ── Stage transition ── */
+    .stage-transition {
+      margin: 28px 0;
+      opacity: 0;
+      transform: translateX(-16px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .stage-transition.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    @keyframes car-drive {
+      0%   { transform: translateX(0px); }
+      30%  { transform: translateX(8px); }
+      60%  { transform: translateX(3px); }
+      80%  { transform: translateX(7px); }
+      100% { transform: translateX(0px); }
+    }
+
+    .travel-info-icon {
+      display: inline-block;
+      animation: car-drive 1.4s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+
+    .stage-transition.is-visible .travel-info-icon {
+      animation-play-state: running;
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stage-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+
+    .divider-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .stage-area { font-size: 13px; color: var(--accent); }
+
+    /* ── Area switch ── */
+    .area-switch {
+      background: rgba(124, 92, 255, 0.08);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius-card);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+
+    .area-switch-text { font-size: 14px; color: var(--accent); font-weight: 600; }
+
+    /* ── Travel info ── */
+    .travel-info {
+      background: var(--card);
+      border-left: 4px solid var(--success);
+      border-radius: var(--radius-card);
+      padding: 12px 16px;
+    }
+
+    .travel-info-text { font-size: 14px; color: var(--text-primary); font-weight: 600; }
+
+    /* ── Venue card ── */
+    .venue-card {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .venue-card:hover { transform: translateY(-4px); }
+
+    .venue-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .venue-card-content { padding: 16px; }
+
+    .venue-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .venue-summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .venue-tags {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+
+    .venue-tags::-webkit-scrollbar { display: none; }
+
+    .venue-tag {
+      flex-shrink: 0;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: capitalize;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .tag-vibe     { background: #7C3AED; }
+    .tag-category { background: #2563EB; }
+    .tag-special  { background: #0891B2; }
+    .tag-price    { background: #059669; }
+
+    .venue-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .venue-rating { font-size: 14px; font-weight: 600; color: var(--warning); }
+    .venue-price  { font-size: 14px; font-weight: 600; color: var(--accent); }
+
+    .venue-location {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── CTA ── */
+    .cta-section { text-align: center; padding: 48px 0 24px; }
+
+    .cta-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .cta-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .app-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .app-button {
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 15px;
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+
+    .app-button:hover { opacity: 0.85; }
+
+    /* ── Footer ── */
+    .footer { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 12px; }
+
+    /* ── Modal (bottom sheet) ── */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--input-surface);
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      z-index: 1;
+    }
+
+    .modal-header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: opacity 0.2s;
+    }
+
+    .modal-close:hover { opacity: 0.6; }
+
+    .modal-body { padding: 24px; }
+
+    .modal-image {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius-card);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .modal-summary {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .modal-address-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .modal-address-pin { color: var(--accent); flex-shrink: 0; }
+
+    .modal-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .modal-rating { font-size: 15px; font-weight: 600; color: var(--warning); }
+    .modal-price  { font-size: 15px; font-weight: 600; color: var(--accent); }
+
+    /* ── Tags section in modal ── */
+    .modal-tags-section { margin-bottom: 8px; }
+
+    .modal-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .modal-tags-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .modal-tag {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      text-transform: capitalize;
+    }
+
+    .modal-tag-vibe     { background: #A78BFA; }
+    .modal-tag-category { background: #60A5FA; }
+    .modal-tag-special  { background: #22D3EE; color: #0B0B0F; }
+    .modal-tag-price    { background: #34D399; color: #0B0B0F; }
+
+    /* ── Modal footer ── */
+    .modal-footer {
+      padding: 20px 24px 32px;
+      border-top: 1px solid var(--input-surface);
+    }
+
+    .modal-maps-button {
+      display: flex;
+      width: 100%;
+      background: var(--text-primary);
+      color: var(--card);
+      text-decoration: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .modal-maps-button:hover { opacity: 0.85; }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 20px 32px; }
+      .venue-image { height: 240px; }
+      .modal-content { max-height: 92vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Plan</div>
+      <h1 class="main-heading">{{ plan.headline|default:"Your Curated Evening" }}</h1>
+      <span class="success-badge">Strong match for your vibe</span>
+      <div class="plan-meta">
+        {% if plan_area_display %}
+        <div class="plan-meta-item">
+          <span>📍</span>
+          <span>{{ plan_area_display }}</span>
+        </div>
+        {% endif %}
+        {% if plan.created_at %}
+        <div class="plan-meta-item">
+          <span>📅</span>
+          <span>{{ plan.created_at|date:"M d, Y" }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <main>
+      {% if plan.description %}
+      <div class="opening-line">
+        <p class="opening-closing-text">{{ plan.description }}</p>
+      </div>
+      {% endif %}
+
+      {% if venues %}
+      <p class="section-heading">Your {{ venues|length }} stage plan</p>
+
+      {% for venue in venues %}
+        {% if not forloop.first %}
+        <div class="stage-transition">
+          <div class="area-switch">
+            <p class="area-switch-text">{% if venue.area %}Next stop · {{ venue.area }}{% else %}Next stop{% endif %}</p>
+          </div>
+          {% if venue.distance_km %}
+          <div class="travel-info">
+            <p class="travel-info-text"><span class="travel-info-icon">🚗</span> {{ venue.distance_km }} km</p>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+      <div class="stage-container">
+        <div class="stage-header">
+          <span class="stage-title">Stage {{ forloop.counter }}</span>
+          {% if venue.area %}
+          <div class="divider-dot"></div>
+          <span class="stage-area">📍 {{ venue.area }}{% if plan.city %}, {{ plan.city }}{% endif %}</span>
+          {% endif %}
+        </div>
+
+        <div class="venue-card" data-index="{{ forloop.counter0 }}" onclick="openModal(+this.dataset.index)">
+          {% if venue.image_url %}
+          <img src="{{ venue.image_url }}" alt="{{ venue.name }}" class="venue-image">
+          {% endif %}
+          <div class="venue-card-content">
+            <h4 class="venue-title">{{ venue.name }}</h4>
+            <p class="venue-summary">{{ venue.summary }}</p>
+
+            {% with all_tags=venue.tags %}
+            {% if all_tags.vibe_tags or all_tags.category_tags or all_tags.special_tags or all_tags.price_tags %}
+            <div class="venue-tags">
+              {% for tag in all_tags.vibe_tags %}<span class="venue-tag tag-vibe">{{ tag }}</span>{% endfor %}
+              {% for tag in all_tags.category_tags %}<span class="venue-tag tag-category">{{ tag }}</span>{% endfor %}
+              {% for tag in all_tags.special_tags %}<span class="venue-tag tag-special">{{ tag }}</span>{% endfor %}
+              {% for tag in all_tags.price_tags %}<span class="venue-tag tag-price">{{ tag }}</span>{% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="venue-meta">
+              {% if venue.rating %}<span class="venue-rating">⭐ {{ venue.rating }}</span>{% endif %}
+              {% if venue.price_display %}<span class="venue-price">{{ venue.price_display }}</span>{% endif %}
+            </div>
+
+            {% if venue.formatted_address %}
+            <div class="venue-location">
+              <span>📍</span>
+              <span>{{ venue.formatted_address }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <div class="cta-section">
+        <h2 class="cta-title">View Full Plan</h2>
+        <p class="cta-subtitle">Download the app to explore venues, get directions, and more</p>
+        <div class="app-buttons">
+          <a href="https://apps.apple.com/app/your-app-id" class="app-button">Download for iOS</a>
+          <a href="https://play.google.com/store/apps/details?id=your.app.id" class="app-button">Download for Android</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 Plan. All rights reserved.</p>
+    </footer>
+
+    <!-- Venue Detail Modal (bottom sheet) -->
+    <div id="venueModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-header-title">Venue Details</span>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <img id="modalImage" src="" alt="Venue" class="modal-image">
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <p class="modal-summary" id="modalSummary"></p>
+
+          <div class="modal-address-row" id="modalAddressRow">
+            <span class="modal-address-pin">📍</span>
+            <span id="modalAddressText"></span>
+          </div>
+
+          <div class="modal-meta" id="modalMeta">
+            <span class="modal-rating" id="modalRating"></span>
+            <span class="modal-price" id="modalPrice"></span>
+          </div>
+
+          <div class="modal-tags-section" id="modalTagsSection">
+            <p class="modal-section-title">✨ What makes this place special</p>
+            <div id="modalTagsContainer"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a id="modalMapsLink" href="#" target="_blank" class="modal-maps-button">
+            📍 Open in Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ venues|json_script:"venues-data" }}
+
+  <script>
+    var VENUES = JSON.parse(document.getElementById('venues-data').textContent);
+
+    var TAG_COLORS = {
+      vibe:     'modal-tag-vibe',
+      category: 'modal-tag-category',
+      special:  'modal-tag-special',
+      price:    'modal-tag-price'
+    };
+
+    function openModal(index) {
+      var v = VENUES[index];
+
+      var img = document.getElementById('modalImage');
+      img.src = v.image_url || '';
+      img.style.display = v.image_url ? 'block' : 'none';
+
+      document.getElementById('modalTitle').textContent = v.name;
+      document.getElementById('modalSummary').textContent = v.summary || '';
+
+      var addrRow = document.getElementById('modalAddressRow');
+      document.getElementById('modalAddressText').textContent = v.address || '';
+      addrRow.style.display = v.address ? 'flex' : 'none';
+
+      var ratingEl = document.getElementById('modalRating');
+      ratingEl.textContent = v.rating ? ('⭐ ' + v.rating) : '';
+      ratingEl.style.display = v.rating ? 'inline' : 'none';
+
+      var priceEl = document.getElementById('modalPrice');
+      priceEl.textContent = v.price_display || '';
+      priceEl.style.display = v.price_display ? 'inline' : 'none';
+
+      document.getElementById('modalMeta').style.display =
+        (v.rating || v.price_display) ? 'flex' : 'none';
+
+      var container = document.getElementById('modalTagsContainer');
+      container.innerHTML = '';
+
+      var allTags = [
+        ...(v.tags.vibe_tags     || []).map(function(t) { return { tag: t, cat: 'vibe' }; }),
+        ...(v.tags.category_tags || []).map(function(t) { return { tag: t, cat: 'category' }; }),
+        ...(v.tags.special_tags  || []).map(function(t) { return { tag: t, cat: 'special' }; }),
+        ...(v.tags.price_tags    || []).map(function(t) { return { tag: t, cat: 'price' }; })
+      ];
+
+      if (allTags.length > 0) {
+        document.getElementById('modalTagsSection').style.display = 'block';
+        var grid = document.createElement('div');
+        grid.className = 'modal-tags-grid';
+        allTags.forEach(function(item) {
+          var span = document.createElement('span');
+          span.className = 'modal-tag ' + (TAG_COLORS[item.cat] || '');
+          span.textContent = item.tag.replace(/_/g, ' ');
+          grid.appendChild(span);
+        });
+        container.appendChild(grid);
+      } else {
+        document.getElementById('modalTagsSection').style.display = 'none';
+      }
+
+      document.getElementById('modalMapsLink').href = v.google_maps_uri || '#';
+      document.getElementById('venueModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('venueModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Replace underscores with spaces in all card tag labels
+    document.querySelectorAll('.venue-tag').forEach(function(el) {
+      el.textContent = el.textContent.replace(/_/g, ' ');
+    });
+
+    document.getElementById('venueModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Scroll-triggered entrance animation for stage transitions
+    var transitionObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          transitionObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.stage-transition').forEach(function(el) {
+      transitionObserver.observe(el);
+    });
+  </script>
+</body>
+</html>

@@ -9,17 +9,17 @@ import json
 import math
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from recommendations.models import Venue, Area, ApiQuery, TAG_STRUCTURE, validate_tags, tags_to_json
+from recommendations.models import Venue, Area, TAG_STRUCTURE, validate_tags, tags_to_json
 
 # Global area and state variables
-AREA_NAME = 'DUMBO'
-STATE_NAME = 'New York'
+AREA_NAME = 'Notting Hill'
+STATE_NAME = 'London'
 
 # Test region
 TEST_LOCATION = {
     'name': AREA_NAME,
-    'lat': 40.7033,
-    'lng': -73.9881,
+    'lat':  51.5152,
+    'lng': -0.2062,
     'radius': 3000  # 3km radius
 }
 
@@ -132,13 +132,12 @@ class DataFetcher:
         price_level = self.convert_price_level(venue_data.get('price_level', 'PRICE_LEVEL_MODERATE'))
         
         # Price and vibe tags based on price level
-        if price_level >= 4:
-            tags['price_tags'].add('premium')
+        if price_level >= 3:
+            tags['price_tags'].add('upscale')
             tags['vibe_tags'].add('fancy')
-        elif price_level == 3:
-            tags['price_tags'].add('expensive')
-            tags['vibe_tags'].add('upscale')
-        elif price_level <= 2:
+        elif price_level == 2:
+            tags['price_tags'].add('moderate')
+        else:
             tags['price_tags'].add('affordable')
         
         # Additional vibe tags based on name
@@ -258,32 +257,10 @@ class DataFetcher:
             
             if not results or 'places' not in results:
                 print(f"Failed to fetch bulk results: {results}")
-                # Track failed query
-                api_query = ApiQuery.objects.create(
-                    query=query,
-                    location=TEST_LOCATION['name'],
-                    field_mask=PLACES_FIELD_MASK,
-                    max_venues=max_venues,
-                    response_json=json.dumps(results) if results else None,
-                    venues_found=0,
-                    venues_stored=0,
-                    success=False
-                )
                 return
-            
+
             places = results.get('places', [])
             print(f"Found {len(places)} total places")
-            
-            # Track successful query (will update venues_stored later)
-            api_query = ApiQuery.objects.create(
-                query=query,
-                location=TEST_LOCATION['name'],
-                field_mask=PLACES_FIELD_MASK,
-                max_venues=max_venues,
-                response_json=json.dumps(results),
-                venues_found=len(places),
-                venues_stored=0  # Will update after processing
-            )
             
             # Debug: Print all available fields for the first place
             if places:
@@ -322,12 +299,6 @@ class DataFetcher:
                     print(f"Created venue {venues_created}: {venue_data['name']}")
                     print(f"  Rating: {venue_data['rating']}, Price: {venue_data['price_level']}, Reviews: {venue_data['user_rating_count']}")
         
-            # Update the API query with final venue count
-            if venues_created > 0:
-                api_query.venues_stored = venues_created
-                api_query.save()
-                print(f"Updated API query record: {venues_created} venues stored")
-            
             print(f"\nCompleted! Created {venues_created} venues in database")
         
         except Exception as e:

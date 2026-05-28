@@ -2338,79 +2338,79 @@ TEMPLATE_EXECUTION_BEHAVIORS = {
 TEMPLATE_COPY = {
     "date_night": {
         "titles": [
-            "A quiet evening in {area}",
-            "Slow nights in {area}",
-            "Intimate spots in {area}"
+            "A slower evening in {area}",
+            "Just the two of you in {area}",
+            "Unhurried nights in {area}"
         ],
         "descriptions": [
-            "Low-key places for a relaxed time together.",
-            "Quiet spots perfect for conversation.",
-            "Intimate venues with a gentle pace."
+            "The kind of evening that feels effortless.",
+            "Spots that make the evening feel easy.",
+            "Quiet enough to actually talk."
         ]
     },
 
     "social_energy": {
         "titles": [
             "Night out in {area}",
-            "Going out in {area}",
-            "Evening in {area}"
+            "The energy is right in {area}",
+            "Where the night goes in {area}"
         ],
         "descriptions": [
-            "Lively spots with good energy throughout the night.",
-            "Places that keep the momentum going.",
-            "Venues with a fun, upbeat atmosphere."
+            "The kind of night that builds on itself.",
+            "Good energy from the first stop to the last.",
+            "The kind of evening you don't want to end."
         ]
     },
 
     "easy_living": {
         "titles": [
-            "Easygoing evening in {area}",
-            "Relaxed time in {area}",
-            "Calm evening in {area}"
+            "No rush in {area}",
+            "Taking it easy in {area}",
+            "A gentle evening in {area}"
         ],
         "descriptions": [
-            "Comfortable places at an unhurried pace.",
-            "Quiet spots for a low-stress evening.",
-            "Easygoing venues with a chill vibe."
+            "The kind of evening that doesn't need a plan.",
+            "Slow and easy, exactly as it should be.",
+            "No agenda. Just a good time."
         ]
     },
 
     "exploration_mode": {
         "titles": [
-            "Discovering {area}",
-            "Wandering around {area}",
-            "New places in {area}"
+            "Something new in {area}",
+            "Off the usual path in {area}",
+            "Loose plans in {area}"
         ],
         "descriptions": [
-            "Different spots to explore around the neighborhood.",
-            "A mix of places to discover nearby.",
-            "Varied venues for something new."
+            "The kind of evening that surprises you.",
+            "For nights with no fixed destination.",
+            "Something a little different every time."
         ]
     },
 
     "social_cafe_crawl": {
         "titles": [
-            "Cafe hopping in {area}",
-            "Coffee around {area}",
-            "Cafes in {area}"
+            "Coffee and good company in {area}",
+            "Slow mornings, slower afternoons in {area}",
+            "Cafe to cafe in {area}"
         ],
         "descriptions": [
-            "Cozy cafes for coffee and conversation.",
-            "Relaxed spots perfect for catching up.",
-            "Quiet cafes with good coffee and a calm vibe."
+            "The kind of afternoon that stretches into evening.",
+            "Good coffee, better conversation.",
+            "Unhurried and easy, just how it should be."
         ]
     },
 
     "retail_therapy": {
         "titles": [
-            "Shopping in {area}",
-            "Stores and cafes in {area}",
-            "Retail and food in {area}"
+            "Browse and breathe in {area}",
+            "Shops and stops in {area}",
+            "A little of everything in {area}"
         ],
         "descriptions": [
-            "Shopping with relaxed food breaks in between.",
-            "A mix of stores and cozy spots to rest.",
-            "Retail therapy with good places to pause."
+            "The kind of afternoon that earns a coffee.",
+            "Slow down, look around, enjoy it.",
+            "No rush. Just a good afternoon out."
         ]
     }
 }

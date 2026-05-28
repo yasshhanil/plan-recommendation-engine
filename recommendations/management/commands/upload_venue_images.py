@@ -3,7 +3,7 @@ Django management command to bulk upload venue images to Google Cloud Storage
 """
 
 from django.core.management.base import BaseCommand
-from recommendations.models import Venue
+from recommendations.models import Venue, Area
 from recommendations.functions import bulk_upload_venue_images
 
 
@@ -17,56 +17,136 @@ class Command(BaseCommand):
             help='Only upload images for venues in a specific area'
         )
         parser.add_argument(
+            '--venue-ids',
+            type=str,
+            help='Comma-separated list of venue IDs to process'
+        )
+        parser.add_argument(
             '--limit',
             type=int,
             help='Limit number of venues to process'
-        )
-        parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Re-upload images even if image_url already exists'
         )
 
     def handle(self, *args, **options):
         self.stdout.write("Starting bulk venue image upload to GCS...")
 
-        # Get venues to process
-        venues = Venue.objects.filter(
-            photo_reference__isnull=False,
-            summary__isnull=False
-        ).exclude(summary='rejected')
+        total_uploaded = 0
+        total_failed = 0
+        all_failed_venues = []
 
-        if options['area_id']:
-            venues = venues.filter(area_id=options['area_id'])
-            self.stdout.write(f"Filtering by area_id: {options['area_id']}")
+        # Process specific venue IDs if provided
+        if options['venue_ids']:
+            venue_id_list = [int(vid.strip()) for vid in options['venue_ids'].split(',') if vid.strip()]
+            self.stdout.write(f"Processing {len(venue_id_list)} specific venue IDs")
 
-        if options['force']:
-            self.stdout.write("Force mode: Re-uploading all images")
+            venues = Venue.objects.filter(
+                id__in=venue_id_list,
+                photo_reference__isnull=False,
+                summary__isnull=False
+            ).exclude(summary='rejected')
+
+            if options['limit']:
+                venues = venues[:options['limit']]
+                self.stdout.write(f"Limiting to {options['limit']} venues")
+
+            venue_count = venues.count()
+            if venue_count == 0:
+                self.stdout.write(self.style.WARNING("No venues to process"))
+                return
+
+            self.stdout.write(f"Processing {venue_count} venues...")
+
+            # Bulk upload images
+            venue_urls = bulk_upload_venue_images(list(venues))
+
+            # Report results
+            uploaded_count = sum(1 for url in venue_urls.values() if url is not None)
+            failed_count = venue_count - uploaded_count
+            total_uploaded += uploaded_count
+            total_failed += failed_count
+
+            # Track failed venues with details
+            failed_venue_details = []
+            for venue in venues:
+                if venue_urls.get(venue.id) is None:
+                    failed_venue_details.append({
+                        'id': venue.id,
+                        'name': venue.name,
+                        'area': venue.area.name if venue.area else 'N/A'
+                    })
+                    all_failed_venues.append(venue.id)
+
+            self.stdout.write(self.style.SUCCESS(f"Successfully uploaded: {uploaded_count}"))
+            if failed_count > 0:
+                self.stdout.write(self.style.ERROR(f"Failed: {failed_count}"))
+                self.stdout.write("\nFailed venues:")
+                for detail in failed_venue_details:
+                    self.stdout.write(f"  - ID: {detail['id']}, Name: {detail['name']}, Area: {detail['area']}")
+
         else:
-            venues = venues.filter(image_url__isnull=True)
-            self.stdout.write("Only uploading venues without image_url")
+            # Process by area
+            if options['area_id']:
+                areas = Area.objects.filter(id=options['area_id'])
+                self.stdout.write(f"Processing single area: {options['area_id']}")
+            else:
+                areas = Area.objects.filter(is_active=True)
+                self.stdout.write(f"Processing all active areas")
 
-        if options['limit']:
-            venues = venues[:options['limit']]
-            self.stdout.write(f"Limiting to {options['limit']} venues")
+            for area in areas:
+                self.stdout.write(f"\n{'=' * 60}")
+                self.stdout.write(f"Processing area: {area.name} (ID: {area.id})")
+                self.stdout.write('=' * 60)
 
-        total_venues = venues.count()
-        if total_venues == 0:
-            self.stdout.write(self.style.WARNING("No venues to process"))
-            return
+                # Get venues for this area
+                venues = Venue.objects.filter(
+                    area=area,
+                    photo_reference__isnull=False,
+                    summary__isnull=False
+                ).exclude(summary='rejected')
 
-        self.stdout.write(f"Processing {total_venues} venues...")
+                if options['limit']:
+                    venues = venues[:options['limit']]
+                    self.stdout.write(f"Limiting to {options['limit']} venues")
 
-        # Bulk upload images
-        venue_urls = bulk_upload_venue_images(list(venues))
+                venue_count = venues.count()
+                if venue_count == 0:
+                    self.stdout.write(self.style.WARNING("No venues to process in this area"))
+                    continue
 
-        # Report results
-        uploaded_count = sum(1 for url in venue_urls.values() if url is not None)
-        failed_count = total_venues - uploaded_count
+                self.stdout.write(f"Processing {venue_count} venues in {area.name}...")
 
-        self.stdout.write("\n" + "=" * 60)
-        self.stdout.write(f"Total venues processed: {total_venues}")
-        self.stdout.write(self.style.SUCCESS(f"Successfully uploaded: {uploaded_count}"))
-        if failed_count > 0:
-            self.stdout.write(self.style.ERROR(f"Failed: {failed_count}"))
-        self.stdout.write("=" * 60)
+                # Bulk upload images
+                venue_urls = bulk_upload_venue_images(list(venues))
+
+                # Report results for this area
+                uploaded_count = sum(1 for url in venue_urls.values() if url is not None)
+                failed_count = venue_count - uploaded_count
+                total_uploaded += uploaded_count
+                total_failed += failed_count
+
+                # Track failed venues with details
+                failed_venue_details = []
+                for venue in venues:
+                    if venue_urls.get(venue.id) is None:
+                        failed_venue_details.append({
+                            'id': venue.id,
+                            'name': venue.name
+                        })
+                        all_failed_venues.append(venue.id)
+
+                self.stdout.write(self.style.SUCCESS(f"Successfully uploaded: {uploaded_count}"))
+                if failed_count > 0:
+                    self.stdout.write(self.style.ERROR(f"Failed: {failed_count}"))
+                    self.stdout.write("Failed venues in this area:")
+                    for detail in failed_venue_details:
+                        self.stdout.write(f"  - ID: {detail['id']}, Name: {detail['name']}")
+
+        # Final summary
+        self.stdout.write(f"\n{'=' * 60}")
+        self.stdout.write("FINAL SUMMARY")
+        self.stdout.write('=' * 60)
+        self.stdout.write(f"Total venues uploaded: {total_uploaded}")
+        if total_failed > 0:
+            self.stdout.write(self.style.ERROR(f"Total failed: {total_failed}"))
+            self.stdout.write(f"All failed venue IDs: {all_failed_venues}")
+        self.stdout.write('=' * 60)

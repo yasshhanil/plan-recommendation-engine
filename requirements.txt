@@ -1,30 +1,14 @@
-# Django framework
-Django==5.0.2
+﻿Django==5.0.2
 django-cors-headers==4.3.1
-django-storages[google]==1.14.0
-google-cloud-storage>=2.10.0
+django-storages==1.14.6
+whitenoise==6.6.0
+gunicorn==22.0.0
+dj-database-url==2.1.0
+python-dotenv==1.0.1
+requests==2.31.0
+google-cloud-storage==3.10.1
+google-auth==2.29.0
+google-generativeai==0.5.2
 playwright==1.60.0
-
-# Database
-sqlite3  # Built into Python
-
-# Data validation and serialization
-pydantic==2.5.0
-
-# HTTP client (for external API calls if needed)
-httpx==0.25.2
-
-# Environment variables
-python-dotenv==1.0.0
-
-# Date/time utilities
-python-dateutil==2.8.2
-
-# JSON utilities (if needed for complex JSON handling)
-orjson==3.9.10
-
-# Development dependencies (optional)
-# pytest==7.4.3
-# pytest-django==4.5.2
-# black==23.11.0
-# flake8==6.1.0
+psycopg2-binary==2.9.9
+sqlparse==0.5.0

@@ -2,14 +2,16 @@
 Django views for the Plan Recommendation Engine API
 """
 
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.db import transaction
+from django.shortcuts import render
 import json
 import logging
+import math
 import random
 
 from .functions import (
@@ -42,6 +44,7 @@ def recommendation(request):
         }
         areas = Area.objects.filter(is_active=True)
         area_id = random.choice(areas).id if areas else 1
+        area_id = 1
         weighted_tags = assign_weights(input_tags)
         print("Weighted tags:", weighted_tags)
         
@@ -93,8 +96,8 @@ def template_recommendation(request):
         print("input_tags:", input_tags)
         areas = Area.objects.filter(is_active=True, state='New York')
         area_id = random.choice(areas).id 
-        area_id = 23
-        number_of_stages = 2 
+        area_id = 1
+        number_of_stages = 2
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
         
@@ -143,7 +146,7 @@ def save_plan(request):
 
         ids = body.get('ids', [])
         city = body.get('city', None)
-        areas = list(set(body.get('area', [])))  # Remove duplicates
+        areas = list(dict.fromkeys(body.get('area', [])))  # Deduplicate, preserve order
         user_tags = body.get('user_tags', {})
         state = body.get('state', None)
 
@@ -213,6 +216,7 @@ def save_plan(request):
         return JsonResponse({
             "success": True,
             "plan_id": plan.id,
+            "share_token": str(plan.share_token),
             "template_id": template_id,
             "headline": headline,
             "description": description,
@@ -275,6 +279,7 @@ def get_venues_by_ids(request):
 
             venue_data = {
                 "id": venue.id,
+                "area": venue.area.name,
                 "title": venue.name,
                 "summary": venue.summary,
                 "tags": venue_tags,
@@ -297,6 +302,70 @@ def get_venues_by_ids(request):
         })
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+def plan_landing_page(request, token):
+    """Landing page to display plan for users without the app"""
+    plan = Plan.objects.filter(share_token=token).first()
+
+    if not plan:
+        return render(request, 'plan_landing.html', {'plan': None, 'error': 'Plan not found'})
+
+    def _haversine(lat1, lng1, lat2, lng2):
+        R = 6371
+        dlat = math.radians(lat2 - lat1)
+        dlng = math.radians(lng2 - lng1)
+        a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlng / 2) ** 2
+        return round(R * 2 * math.asin(math.sqrt(a)), 1)
+
+    def _fmt_area(raw):
+        return raw.replace('_', ' ').title() if raw else None
+
+    price_symbols = {0: 'Free', 1: '$', 2: '$$', 3: '$$$', 4: '$$$$'}
+
+    # Fetch venues if plan has venue_ids, preserving order and parsing tags
+    venues = []
+    if plan.ids:
+        venue_map = {v.id: v for v in Venue.objects.filter(id__in=plan.ids)}
+        plan_areas = plan.area if isinstance(plan.area, list) else []
+        prev_lat = prev_lng = None
+        for i, venue_id in enumerate(plan.ids):
+            venue = venue_map.get(venue_id)
+            if not venue:
+                continue
+            tags = {}
+            if venue.tags:
+                try:
+                    tags = json.loads(venue.tags)
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            distance_km = None
+            if prev_lat is not None and venue.lat and venue.lng:
+                distance_km = _haversine(prev_lat, prev_lng, float(venue.lat), float(venue.lng))
+            raw_area = plan_areas[i] if i < len(plan_areas) else (plan_areas[-1] if plan_areas else None)
+            venues.append({
+                'name': venue.name,
+                'summary': venue.summary,
+                'image_url': venue.image_url,
+                'formatted_address': venue.formatted_address,
+                'google_maps_uri': venue.google_maps_uri,
+                'rating': float(venue.rating) if venue.rating is not None else None,
+                'price_display': price_symbols.get(venue.price_level, ''),
+                'tags': tags,
+                'area': _fmt_area(raw_area),
+                'distance_km': distance_km,
+            })
+            prev_lat, prev_lng = venue.lat, venue.lng
+
+    plan_area_display = ', '.join(_fmt_area(a) for a in (plan.area or []) if a)
+
+    context = {
+        'plan': plan,
+        'venues': venues,
+        'plan_area_display': plan_area_display,
+    }
+
+    return render(request, 'plan_landing.html', context)
 
 
 @csrf_exempt

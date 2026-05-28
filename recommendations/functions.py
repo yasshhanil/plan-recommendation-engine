@@ -55,7 +55,7 @@ def bulk_upload_venue_images(venues: List[Venue]) -> Dict[int, Optional[str]]:
     """
 
     venue_urls = {}
-    client = storage.Client()
+    client = storage.Client(credentials=settings.GS_CREDENTIALS)
     bucket = client.bucket(settings.GS_BUCKET_NAME)
 
     blobs_to_check = []
@@ -312,6 +312,9 @@ def generate_plan_from_template(weighted_template_tags: Dict, input_tags: Dict, 
         if venue_id_choices is None:
             continue
 
+        selected_venue_ids = [venue["id"] for venue in venue_id_choices["selected_venues"]]
+        venue_ids.append(selected_venue_ids)
+
         transition = None
         if previous_selected_tags:
             transition = get_energy_transition(previous_selected_tags, selected_tags)
@@ -546,11 +549,18 @@ def score_venues(venues: List[Venue], selected_tags: Dict[str, str]) -> List[tup
        
         if user_selected_category_tag in venue_category_tags:
             tag_score = venue_scoring_weights.get('category_tags', 0)
-            
+
             for tag_type, selected_tag in selected_tags.items():
                 if tag_type != 'category_tags' and selected_tag in venue_tags.get(tag_type, []):
                     tag_score += venue_scoring_weights.get(tag_type, 0)
-            
+
+            # Penalise venues whose price tier directly conflicts with the user's preference
+            price_opposites = {'upscale': 'affordable', 'affordable': 'upscale'}
+            user_price = selected_tags.get('price_tags', '')
+            opposing = price_opposites.get(user_price)
+            if opposing and opposing in venue_tags.get('price_tags', []):
+                tag_score -= 1.4
+
             venue_scores.append((venue.id, tag_score))
     
     venue_scores.sort(key=lambda x: x[1], reverse=True)
@@ -671,7 +681,7 @@ def generate_share_image(venue_ids: List[int], city: str, area: List[str], plan_
 
             browser.close()
 
-        client = storage.Client()
+        client = storage.Client(credentials=settings.GS_CREDENTIALS)
         bucket = client.bucket(settings.GS_BUCKET_NAME)
         filename = f'share_images/plan_{plan_id}.png'
         blob = bucket.blob(filename)

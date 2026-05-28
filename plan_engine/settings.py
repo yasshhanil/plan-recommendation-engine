@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 from dotenv import load_dotenv
+from google.oauth2 import service_account
+import json
 
 # Load environment variables
 load_dotenv()
@@ -28,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c$%z^!kw$s5c58pk^a*rxq&(i=1vde@#mcdk3mgvzbs@lw=1ux'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ['*']
 
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,13 +86,19 @@ WSGI_APPLICATION = 'plan_engine.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -125,9 +135,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = 'plan-venue-images'
+GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/venue_images/'
 
 # Default primary key field type
@@ -168,15 +179,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-GOOGLE_APPLICATION_CREDENTIALS = os.path.join(
-    BASE_DIR,
-    "gcs-key.json"
-)
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    GOOGLE_APPLICATION_CREDENTIALS
+GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+    json.loads(os.environ["GCS_CREDENTIALS"])
 )
 
 # Disable urllib3 debug logs
