@@ -661,31 +661,34 @@ def generate_share_image(venue_ids: List[int], city: str, area: List[str], plan_
         else:
             title = "Your Plan"
 
+        venue_names = [v.name for v in venues]
+
         html_content = render_to_string('share_card.html', {
             'background_image': background_image,
             'title': title,
             'subtitle': subtitle,
             'location': location,
+            'venue_names': venue_names,
         })
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
             page = browser.new_page(
                 viewport={'width': 360, 'height': 640},
-                device_scale_factor=3
+                device_scale_factor=2
             )
 
             page.set_content(html_content)
 
-            screenshot_bytes = page.screenshot(type='png')
+            screenshot_bytes = page.screenshot(type='jpeg', quality=82)
 
             browser.close()
 
         client = storage.Client(credentials=settings.GS_CREDENTIALS)
         bucket = client.bucket(settings.GS_BUCKET_NAME)
-        filename = f'share_images/plan_{plan_id}.png'
+        filename = f'share_images/plan_{plan_id}.jpg'
         blob = bucket.blob(filename)
-        blob.upload_from_file(io.BytesIO(screenshot_bytes), content_type='image/png')
+        blob.upload_from_file(io.BytesIO(screenshot_bytes), content_type='image/jpeg')
 
         public_url = f"https://storage.googleapis.com/{settings.GS_BUCKET_NAME}/{filename}"
         return public_url

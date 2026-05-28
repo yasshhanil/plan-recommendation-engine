@@ -154,6 +154,20 @@
             letter-spacing: 0.5px;
         }
 
+        .venues {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1vw, 10px);
+            margin-bottom: clamp(14px, 2vw, 22px);
+        }
+
+        .venue-item {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: clamp(13px, 2vw, 20px);
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+
         .branding {
             position: absolute;
             bottom: clamp(50px, 6vw, 80px);
@@ -178,6 +192,14 @@
 
         <div class="content">
             <h1 class="title">{{ title }}</h1>
+
+            {% if venue_names %}
+            <div class="venues">
+                {% for name in venue_names %}
+                <div class="venue-item">{{ name }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
             {% if subtitle %}
             <p class="subtitle">{{ subtitle }}</p>

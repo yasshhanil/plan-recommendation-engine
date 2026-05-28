@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plan - {{ plan.city }}</title>
+  <title>{{ plan.headline|default:"Your Plan" }} — Plan</title>
+
+  <!-- Open Graph / WhatsApp / iMessage preview -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="{{ request.build_absolute_uri }}">
+  <meta property="og:title"       content="{{ plan.headline|default:'Your Plan' }}">
+  <meta property="og:description" content="{{ plan.description|default:'A curated plan just for you.' }}">
+  {% if plan.share_image_url %}
+  <meta property="og:image"       content="{{ plan.share_image_url }}">
+  <meta property="og:image:width"  content="1080">
+  <meta property="og:image:height" content="1920">
+  {% endif %}
+
+  <!-- Twitter card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="{{ plan.headline|default:'Your Plan' }}">
+  <meta name="twitter:description" content="{{ plan.description|default:'A curated plan just for you.' }}">
+  {% if plan.share_image_url %}
+  <meta name="twitter:image"       content="{{ plan.share_image_url }}">
+  {% endif %}
   <style>
     :root {
       --bg: #0B0B0F;
@@ -300,6 +319,74 @@
     /* ── Footer ── */
     .footer { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 12px; }
 
+    /* ── Share card cover ── */
+    .share-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      background: #000;
+      cursor: pointer;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease;
+    }
+
+    .share-cover.hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .share-cover-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .share-cover-hint {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 32px 24px;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .share-cover-hint-arrow {
+      width: 32px;
+      height: 32px;
+      border-left: 2px solid rgba(255,255,255,0.5);
+      border-bottom: 2px solid rgba(255,255,255,0.5);
+      transform: rotate(-45deg);
+      animation: bounce-down 1.4s ease-in-out infinite;
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: rotate(-45deg) translateY(0); }
+      50%       { transform: rotate(-45deg) translateY(6px); }
+    }
+
+    .plan-content {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+
+    .plan-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* ── Modal (bottom sheet) ── */
     .modal {
       display: none;
@@ -465,7 +552,17 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  {% if plan.share_image_url %}
+  <div class="share-cover" id="shareCover" onclick="revealPlan()">
+    <img class="share-cover-image" src="{{ plan.share_image_url }}" alt="Plan">
+    <div class="share-cover-hint">
+      <span>Tap to view plan</span>
+      <div class="share-cover-hint-arrow"></div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="container plan-content" id="planContent">
     <div class="header">
       <div class="logo">Plan</div>
       <h1 class="main-heading">{{ plan.headline|default:"Your Curated Evening" }}</h1>
@@ -608,6 +705,19 @@
   {{ venues|json_script:"venues-data" }}
 
   <script>
+    function revealPlan() {
+      var cover = document.getElementById('shareCover');
+      var content = document.getElementById('planContent');
+      if (cover) cover.classList.add('hidden');
+      if (content) content.classList.add('visible');
+    }
+
+    // If no share image, show content immediately
+    if (!document.getElementById('shareCover')) {
+      var content = document.getElementById('planContent');
+      if (content) content.classList.add('visible');
+    }
+
     var VENUES = JSON.parse(document.getElementById('venues-data').textContent);
 
     var TAG_COLORS = {

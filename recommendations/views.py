@@ -96,7 +96,7 @@ def template_recommendation(request):
         print("input_tags:", input_tags)
         areas = Area.objects.filter(is_active=True, state='New York')
         area_id = random.choice(areas).id 
-        area_id = 1
+        area_id = 23
         number_of_stages = 2
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
@@ -459,11 +459,14 @@ def preview_share_card(request):
             title = "Your Plan"
 
         # Render HTML template
+        venue_names = [v.name for v in venues]
+
         html_content = render_to_string('share_card.html', {
             'background_image': background_image,
             'title': title,
             'subtitle': subtitle,
             'location': location,
+            'venue_names': venue_names,
         })
 
         return HttpResponse(html_content, content_type='text/html')

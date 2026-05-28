@@ -47,10 +47,10 @@ class VenueAdmin(admin.ModelAdmin):
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     """Admin configuration for Plan model"""
-    list_display = ['id', 'city', 'area', 'template_id', 'headline_display', 'ids_display', 'user_tags_display', 'share_image_url_display', 'created_at', 'updated_at']
+    list_display = ['id', 'city', 'area', 'template_id', 'headline_display', 'ids_display', 'user_tags_display', 'share_image_url_display', 'share_token', 'created_at', 'updated_at']
     list_filter = ['city', 'area', 'template_id']
     search_fields = ['city', 'area', 'headline', 'description', 'template_id']
-    readonly_fields = ['created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at', 'share_token']
     ordering = ['-created_at']
 
     def ids_display(self, obj):
@@ -89,7 +89,7 @@ class PlanAdmin(admin.ModelAdmin):
             'fields': ('template_id', 'headline', 'description')
         }),
         ('Data', {
-            'fields': ('ids', 'user_tags', 'share_image_url')
+            'fields': ('ids', 'user_tags', 'share_image_url', 'share_token')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at')
