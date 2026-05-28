@@ -44,22 +44,17 @@ class Migration(migrations.Migration):
                 'ordering': ['name'],
             },
         ),
-        migrations.RunSQL(
-            sql="""
-                ALTER TABLE areas DROP CONSTRAINT IF EXISTS areas_name_key;
-                DROP INDEX IF EXISTS "idx_18373_sqlite_autoindex_areas_1";
-            """,
-            reverse_sql=migrations.RunSQL.noop,
+        migrations.RunPython(
+            lambda apps, schema_editor: (
+                schema_editor.execute("ALTER TABLE areas DROP CONSTRAINT IF EXISTS areas_name_key") or
+                schema_editor.execute('DROP INDEX IF EXISTS "idx_18373_sqlite_autoindex_areas_1"')
+            ) if schema_editor.connection.vendor == 'postgresql' else None,
+            migrations.RunPython.noop,
         ),
-        migrations.SeparateDatabaseAndState(
-            state_operations=[
-                migrations.AlterField(
-                    model_name='area',
-                    name='name',
-                    field=models.CharField(db_index=True, help_text='Area/neighbourhood name', max_length=255),
-                ),
-            ],
-            database_operations=[],
+        migrations.AlterField(
+            model_name='area',
+            name='name',
+            field=models.CharField(db_index=True, help_text='Area/neighbourhood name', max_length=255),
         ),
         migrations.AddField(
             model_name='area',

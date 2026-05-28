@@ -12,6 +12,8 @@ api_engine/
 data_population/
 
 gcs-key.json
+staticfiles/
+data_dump*.json
 
 # Management commands (except functions.py)
 # recommendations/management/

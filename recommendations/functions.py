@@ -673,8 +673,9 @@ def generate_share_image(venue_ids: List[int], city: str, area: List[str], plan_
             )
 
             page.set_content(html_content)
+            page.wait_for_load_state('networkidle')
 
-            screenshot_bytes = page.screenshot(type='jpeg', quality=82)
+            screenshot_bytes = page.screenshot(type='jpeg', quality=72)
 
             browser.close()
 

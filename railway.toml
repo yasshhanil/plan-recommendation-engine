@@ -1,5 +1,2 @@
-[build]
-buildCommand = "pip install -r requirements.txt && PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium --with-deps && python manage.py collectstatic --noinput"
-
 [deploy]
-startCommand = "gunicorn plan_engine.wsgi"
+startCommand = "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:8000"

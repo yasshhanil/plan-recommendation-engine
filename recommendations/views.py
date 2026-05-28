@@ -304,6 +304,60 @@ def get_venues_by_ids(request):
     return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
+@csrf_exempt
+def get_areas_by_city(request):
+    """Return all active areas for a given city name"""
+    if request.method == 'GET':
+        city_name = request.GET.get('city')
+        if not city_name:
+            return JsonResponse({"error": "Missing required parameter: city"}, status=400)
+
+        areas = (
+            Area.objects
+            .filter(city__name__iexact=city_name, is_active=True)
+            .select_related('city__country')
+            .order_by('name')
+        )
+
+        if not areas.exists():
+            return JsonResponse({"error": f"No areas found for city: {city_name}"}, status=404)
+
+        return JsonResponse({
+            "success": True,
+            "city": areas.first().city.name,
+            "country": areas.first().city.country.name,
+            "areas": [{"id": a.id, "name": a.name} for a in areas]
+        })
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def get_cities(request):
+    """Return all active cities with their country"""
+    if request.method == 'GET':
+        from .models import City
+        cities = (
+            City.objects
+            .filter(is_active=True)
+            .select_related('country')
+            .order_by('name')
+        )
+        return JsonResponse({
+            "success": True,
+            "cities": [
+                {
+                    "id": c.id,
+                    "name": c.name,
+                    "country": c.country.name,
+                    "country_code": c.country.code,
+                }
+                for c in cities
+            ]
+        })
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
 def plan_landing_page(request, token):
     """Landing page to display plan for users without the app"""
     plan = Plan.objects.filter(share_token=token).first()

@@ -13,6 +13,8 @@ urlpatterns = [
     path('save-plan/', views.save_plan, name='save_plan'),
     path('get-plans/', views.get_plans, name='get_plans'),
     path('get-venues/', views.get_venues_by_ids, name='get_venues_by_ids'),
+    path('get-areas/', views.get_areas_by_city, name='get_areas_by_city'),
+    path('get-cities/', views.get_cities, name='get_cities'),
     path('plan/<uuid:token>/', views.plan_landing_page, name='plan_landing_page'),
     path('preview-card/', views.preview_share_card, name='preview_share_card'),
 ]
