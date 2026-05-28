@@ -81,6 +81,7 @@ class Venue(models.Model):
     summary = models.TextField(null=True, blank=True, help_text="Venue summary (to be populated manually)")
     tags = models.TextField(null=True, blank=True, help_text="Structured tags as JSON")
     image_url = models.URLField(max_length=500, null=True, blank=True, help_text="Cached GCS image URL")
+    image_cached_at = models.DateTimeField(null=True, blank=True, help_text="When the image was last cached to GCS")
     shown_count = models.IntegerField(default=0, help_text="Number of times this venue has been shown")
     saved_count_this_month = models.IntegerField(default=0, help_text="Number of times this venue has been saved this month")
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, related_name='venues')
