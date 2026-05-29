@@ -145,9 +145,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/venue_images/'
 
-if GS_CREDENTIALS:
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -191,6 +188,9 @@ GS_CREDENTIALS = (
     service_account.Credentials.from_service_account_info(json.loads(_gcs_credentials_json))
     if _gcs_credentials_json else None
 )
+
+if GS_CREDENTIALS:
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
 
 # Disable urllib3 debug logs
 import logging
