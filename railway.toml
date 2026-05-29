@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:$PORT"
+startCommand = "python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:8000 --workers 2 --timeout 120"
