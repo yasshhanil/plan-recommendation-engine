@@ -94,9 +94,7 @@ def template_recommendation(request):
             input_tags = json.loads(tags)
         
         print("input_tags:", input_tags)
-        areas = Area.objects.filter(is_active=True)
-        area_id = random.choice(areas).id 
-        area_id = 1
+       
         number_of_stages = 2
         
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
@@ -334,13 +332,14 @@ def get_areas_by_city(request):
 
 @csrf_exempt
 def get_cities(request):
-    """Return all active cities with their country"""
+    """Return all active cities with their country and areas"""
     if request.method == 'GET':
         from .models import City
         cities = (
             City.objects
             .filter(is_active=True)
             .select_related('country')
+            .prefetch_related('areas')
             .order_by('name')
         )
         return JsonResponse({
@@ -351,6 +350,10 @@ def get_cities(request):
                     "name": c.name,
                     "country": c.country.name,
                     "country_code": c.country.code,
+                    "areas": [
+                        {"id": a.id, "name": a.name}
+                        for a in c.areas.filter(is_active=True).order_by('name')
+                    ]
                 }
                 for c in cities
             ]
