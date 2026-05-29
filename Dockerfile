@@ -21,4 +21,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:8000
+CMD python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:$PORT
