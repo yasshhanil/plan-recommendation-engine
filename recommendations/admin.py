@@ -3,7 +3,7 @@ Django admin configuration for recommendations app
 """
 
 from django.contrib import admin
-from .models import Country, City, Area, Venue, Plan, ApiQuery
+from .models import Country, City, Area, Venue, Plan, ApiQuery, Wishlister
 
 
 @admin.register(Country)
@@ -108,6 +108,14 @@ class PlanAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at')
         }),
     )
+
+
+@admin.register(Wishlister)
+class WishlisterAdmin(admin.ModelAdmin):
+    list_display = ['email', 'city', 'created_at']
+    search_fields = ['email', 'city']
+    readonly_fields = ['created_at']
+    ordering = ['-created_at']
 
 
 @admin.register(ApiQuery)

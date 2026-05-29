@@ -231,7 +231,7 @@ def json_to_tags(tags_json):
 
 class Plan(models.Model):
     """Database model for generated plans."""
-    city = models.CharField(max_length=255, db_index=True, null=True, blank=True, help_text="City name")
+    city = models.ForeignKey('City', on_delete=models.SET_NULL, null=True, blank=True, related_name='plans')
     area = models.JSONField(null=True, blank=True, help_text="Array of area names")
     ids = models.JSONField(null=True, blank=True, help_text="List of venue IDs in the plan")
     user_tags = models.JSONField(null=True, blank=True, help_text="User tags used to generate this plan")
@@ -246,9 +246,24 @@ class Plan(models.Model):
     class Meta:
         db_table = "plans"
         ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['city']),
-        ]
+        indexes = []
 
     def __str__(self):
         return f"Plan in {self.area}, {self.city}"
+
+
+# ============================================================================
+# WISHLISTER MODEL
+# ============================================================================
+
+class Wishlister(models.Model):
+    email = models.EmailField(unique=True, db_index=True)
+    city = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "wishlisters"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.email} — {self.city}"

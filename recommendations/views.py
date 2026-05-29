@@ -23,7 +23,7 @@ from .functions import (
 )
 from django.template.loader import render_to_string
 from django.db import models as django_models
-from .models import Area, Plan, Venue, TAG_STRUCTURE
+from .models import Area, Plan, Venue, Wishlister, TAG_STRUCTURE
 from .templates import select_best_template, get_confidence_level
 from .template_constants import PLAN_STAGE_WEIGHTS_2_STAGE, PLAN_STAGE_WEIGHTS_3_STAGE, TEMPLATE_COPY
 logger = logging.getLogger(__name__)
@@ -80,6 +80,12 @@ def template_recommendation(request):
         
         tags = body.get('tags', None)
         area_id = body.get('area_id', None)
+        city_id = body.get('city_id', None)
+
+        if not area_id and city_id:
+            random_area = Area.objects.filter(city_id=city_id, is_active=True).order_by('?').first()
+            if random_area:
+                area_id = random_area.id
         
         if not tags:
             input_tags = {
@@ -143,13 +149,19 @@ def save_plan(request):
             body = {}
 
         ids = body.get('ids', [])
-        city = body.get('city', None)
+        city_id = body.get('city_id', None)
         areas = list(dict.fromkeys(body.get('area', [])))  # Deduplicate, preserve order
         user_tags = body.get('user_tags', {})
         state = body.get('state', None)
 
-        if not ids or not city or not areas:
-            return JsonResponse({"error": "Missing required fields: ids, city, area"}, status=400)
+        if not ids or not city_id or not areas:
+            return JsonResponse({"error": "Missing required fields: ids, city_id, area"}, status=400)
+
+        from .models import City
+        try:
+            city_obj = City.objects.get(id=city_id)
+        except City.DoesNotExist:
+            return JsonResponse({"error": f"City with id {city_id} not found"}, status=404)
 
         # Extract tags from venues to calculate best template
         venues = Venue.objects.filter(id__in=ids)
@@ -183,7 +195,7 @@ def save_plan(request):
                         headline_template = random.choice(title_options)
 
                         # Use first area for single-area style headlines
-                        headline = headline_template.format(area=areas[0] if areas else city)
+                        headline = headline_template.format(area=areas[0] if areas else city_obj.name)
 
                     if 'descriptions' in TEMPLATE_COPY[template_id]:
                         description_options = TEMPLATE_COPY[template_id]['descriptions']
@@ -193,7 +205,7 @@ def save_plan(request):
                 logger.warning(f"Failed to calculate template, headline, or description for plan: {e}")
 
         plan = Plan.objects.create(
-            city=city,
+            city=city_obj,
             area=areas,
             ids=ids,
             user_tags=user_tags,
@@ -206,7 +218,7 @@ def save_plan(request):
             Venue.objects.filter(id__in=ids).update(saved_count_this_month=django_models.F('saved_count_this_month') + 1)
 
         # Generate shareable image
-        share_image_url = generate_share_image(ids, city, areas, plan.id, state, headline)
+        share_image_url = generate_share_image(ids, city_obj.name, areas, plan.id, state, headline)
         if share_image_url:
             plan.share_image_url = share_image_url
             plan.save()
@@ -234,11 +246,12 @@ def get_plans(request):
         for plan in plans:
             plans_data.append({
                 "id": plan.id,
-                "city": plan.city,
+                "city": plan.city.name if plan.city else None,
                 "area": plan.area,
                 "venue_ids": plan.ids,
                 "user_tags": plan.user_tags,
                 "template_id": plan.template_id,
+                "share_token": plan.share_token,
                 "headline": plan.headline,
                 "description": plan.description,
                 "share_image_url": plan.share_image_url,
@@ -470,44 +483,45 @@ def preview_share_card(request):
         subtitle = ' • '.join(human_categories) if human_categories else None
 
         # Build location string with city
+        city_name = plan.city.name if plan.city else None
         area_str = ', '.join(plan.area) if isinstance(plan.area, list) else str(plan.area)
-        if plan.city:
-            location = f"{area_str}, {plan.city}"
+        if city_name:
+            location = f"{area_str}, {city_name}"
         else:
             location = area_str
 
         # Use headline if available, otherwise generate title
         if plan.headline:
             title = plan.headline
-        elif plan.city:
+        elif city_name:
             # Generate contextual title based on categories
             if 'bar' in categories or 'nightlife' in categories:
                 titles = [
-                    f"Late Hours in {plan.city}",
+                    f"Late Hours in {city_name}",
                     f"Cocktails After Dark",
                     f"The Night Opens Up Here",
                     f"Drinks & Conversation",
                 ]
             elif 'restaurant' in categories or 'cafe' in categories:
                 titles = [
-                    f"A Slower Night in {plan.city}",
+                    f"A Slower Night in {city_name}",
                     f"Evening That Builds Slowly",
                     f"Dinner & Conversation",
-                    f"Quiet Hours in {plan.city}",
+                    f"Quiet Hours in {city_name}",
                 ]
             elif 'activity' in categories or 'entertainment' in categories:
                 titles = [
                     f"An Evening to Remember",
                     f"Live & Unforgettable",
-                    f"Tonight in {plan.city}",
+                    f"Tonight in {city_name}",
                     f"The Night Comes Alive",
                 ]
             else:
                 titles = [
-                    f"Evening in {plan.city}",
-                    f"Tonight in {plan.city}",
-                    f"A Night in {plan.city}",
-                    f"After Hours in {plan.city}",
+                    f"Evening in {city_name}",
+                    f"Tonight in {city_name}",
+                    f"A Night in {city_name}",
+                    f"After Hours in {city_name}",
                 ]
 
             # Select title based on plan id for consistency
@@ -529,3 +543,30 @@ def preview_share_card(request):
         return HttpResponse(html_content, content_type='text/html')
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def join_waitlist(request):
+    if request.method != 'POST':
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    email = (body.get('email') or '').strip().lower()
+    city = (body.get('city') or '').strip()
+
+    if not email or '@' not in email or '.' not in email.split('@')[-1]:
+        return JsonResponse({"error": "Invalid email address"}, status=400)
+
+    if not city:
+        return JsonResponse({"error": "City is required"}, status=400)
+
+    _, created = Wishlister.objects.get_or_create(email=email, defaults={'city': city})
+    if not created:
+        return JsonResponse({"message": "You're already on the list!"}, status=200)
+
+    return JsonResponse({"message": "You're on the list!"}, status=201)
+

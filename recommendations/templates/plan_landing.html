@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ plan.headline|default:"Your Plan" }} — Plan</title>
+  <title>{{ plan.headline|default:"Your Plan" }} — Outtie</title>
 
   <!-- Open Graph / WhatsApp / iMessage preview -->
   <meta property="og:type"        content="website">
@@ -25,26 +25,29 @@
   {% if plan.share_image_url %}
   <meta name="twitter:image"       content="{{ plan.share_image_url }}">
   {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0B0B0F;
-      --elevated: #15161B;
-      --card: #1C1E24;
-      --input-surface: #23262F;
-      --accent: #7C5CFF;
-      --success: #4ADE80;
-      --warning: #FACC15;
-      --text-primary: #FFFFFF;
-      --text-secondary: #B7BCC7;
-      --text-muted: #7D8594;
-      --radius-card: 24px;
+      --bg: #F5F7FA;
+      --elevated: #FFFFFF;
+      --card: #FFFFFF;
+      --input-surface: #EEEEF3;
+      --accent: #FF6B2B;
+      --success: #22C55E;
+      --warning: #F59E0B;
+      --text-primary: #1A1A2E;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --radius-card: 20px;
       --radius-pill: 999px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       min-height: 100vh;
       color: var(--text-primary);
@@ -79,7 +82,7 @@
 
     .success-badge {
       display: inline-block;
-      background: rgba(74, 222, 128, 0.15);
+      background: rgba(34, 197, 94, 0.12);
       color: var(--success);
       font-size: 13px;
       font-weight: 600;
@@ -107,7 +110,7 @@
 
     /* ── Opening line ── */
     .opening-line {
-      background: rgba(124, 92, 255, 0.08);
+      background: rgba(255, 107, 43, 0.07);
       border-left: 4px solid var(--accent);
       border-radius: var(--radius-card);
       padding: 16px;
@@ -138,23 +141,6 @@
       transform: translateX(0);
     }
 
-    @keyframes car-drive {
-      0%   { transform: translateX(0px); }
-      30%  { transform: translateX(8px); }
-      60%  { transform: translateX(3px); }
-      80%  { transform: translateX(7px); }
-      100% { transform: translateX(0px); }
-    }
-
-    .travel-info-icon {
-      display: inline-block;
-      animation: car-drive 1.4s ease-in-out infinite;
-      animation-play-state: paused;
-    }
-
-    .stage-transition.is-visible .travel-info-icon {
-      animation-play-state: running;
-    }
 
     .stage-header {
       display: flex;
@@ -178,7 +164,7 @@
 
     /* ── Area switch ── */
     .area-switch {
-      background: rgba(124, 92, 255, 0.08);
+      background: rgba(255, 107, 43, 0.07);
       border-left: 4px solid var(--accent);
       border-radius: var(--radius-card);
       padding: 12px 16px;
@@ -193,6 +179,7 @@
       border-left: 4px solid var(--success);
       border-radius: var(--radius-card);
       padding: 12px 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .travel-info-text { font-size: 14px; color: var(--text-primary); font-weight: 600; }
@@ -203,10 +190,11 @@
       border-radius: var(--radius-card);
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
     }
 
-    .venue-card:hover { transform: translateY(-4px); }
+    .venue-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
 
     .venue-image {
       width: 100%;
@@ -285,108 +273,199 @@
     }
 
     /* ── CTA ── */
-    .cta-section { text-align: center; padding: 48px 0 24px; }
+    .cta-section { padding: 48px 0 24px; }
 
     .cta-title {
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 30px;
+      font-weight: 800;
       color: var(--text-primary);
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
     }
+
+    .cta-title span { color: var(--accent); }
 
     .cta-subtitle {
-      font-size: 15px;
+      font-size: 16px;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.65;
       margin-bottom: 28px;
+      font-weight: 400;
     }
 
-    .app-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .store-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
 
-    .app-button {
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      padding: 16px 32px;
+    .store-button {
+      background: var(--input-surface);
+      color: var(--text-muted);
+      border: none;
+      padding: 14px 28px;
       border-radius: 18px;
       font-weight: 700;
+      font-size: 14px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: default;
+    }
+
+    .store-button-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .store-button-name  { font-size: 15px; font-weight: 700; color: var(--text-secondary); }
+
+    /* ── Notify me form ── */
+    .notify-form {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      text-align: left;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+
+    .notify-form-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .notify-form-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .notify-input {
+      width: 100%;
+      background: var(--input-surface);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 12px 14px;
       font-size: 15px;
-      display: inline-block;
+      color: var(--text-primary);
+      font-family: inherit;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .notify-input::placeholder { color: var(--text-muted); }
+    .notify-input:focus { border-color: var(--accent); }
+    .notify-input.error { border-color: #EF4444; }
+
+    .notify-error {
+      font-size: 12px;
+      color: #EF4444;
+      margin-top: -6px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .notify-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
       transition: opacity 0.2s;
     }
 
-    .app-button:hover { opacity: 0.85; }
+    .notify-submit:hover { opacity: 0.88; }
+    .notify-submit:disabled { opacity: 0.5; cursor: default; }
+
+    .notify-success {
+      display: none;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .notify-success-icon { font-size: 32px; margin-bottom: 8px; }
+
+    .notify-success-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--success);
+    }
+
+    .notify-success-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── App screenshots ── */
+    .screenshots {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .screenshot {
+      width: 48%;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+      display: block;
+      object-fit: cover;
+    }
 
     /* ── Footer ── */
     .footer { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 12px; }
 
-    /* ── Share card cover ── */
-    .share-cover {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
+    /* ── Inline share card ── */
+    .share-card {
+      margin-bottom: 24px;
+    }
+
+    .share-card .venue-image {
+      height: 620px;
+    }
+
+    .share-card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .share-card-actions {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      background: #000;
-      cursor: pointer;
-      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease;
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--input-surface);
     }
 
-    .share-cover.hidden {
-      transform: translateY(-100%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .share-cover-image {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-
-    .share-cover-hint {
-      position: relative;
-      z-index: 1;
+    .share-btn {
+      flex: 1;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 8px;
-      padding: 32px 24px;
-      color: rgba(255,255,255,0.7);
+      justify-content: center;
+      gap: 6px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
       font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
 
-    .share-cover-hint-arrow {
-      width: 32px;
-      height: 32px;
-      border-left: 2px solid rgba(255,255,255,0.5);
-      border-bottom: 2px solid rgba(255,255,255,0.5);
-      transform: rotate(-45deg);
-      animation: bounce-down 1.4s ease-in-out infinite;
-    }
+    .share-btn:hover { opacity: 0.85; }
 
-    @keyframes bounce-down {
-      0%, 100% { transform: rotate(-45deg) translateY(0); }
-      50%       { transform: rotate(-45deg) translateY(6px); }
-    }
-
-    .plan-content {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
-    }
-
-    .plan-content.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .share-btn-secondary {
+      background: var(--input-surface);
+      color: var(--text-primary);
     }
 
     /* ── Modal (bottom sheet) ── */
@@ -408,6 +487,7 @@
       max-width: 480px;
       max-height: 85vh;
       overflow-y: auto;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
     }
 
     .modal-header {
@@ -517,10 +597,10 @@
       text-transform: capitalize;
     }
 
-    .modal-tag-vibe     { background: #A78BFA; }
-    .modal-tag-category { background: #60A5FA; }
-    .modal-tag-special  { background: #22D3EE; color: #0B0B0F; }
-    .modal-tag-price    { background: #34D399; color: #0B0B0F; }
+    .modal-tag-vibe     { background: #7C3AED; }
+    .modal-tag-category { background: #2563EB; }
+    .modal-tag-special  { background: #0891B2; }
+    .modal-tag-price    { background: #059669; }
 
     /* ── Modal footer ── */
     .modal-footer {
@@ -546,6 +626,36 @@
 
     .modal-maps-button:hover { opacity: 0.85; }
 
+    /* ── Not found state ── */
+    .not-found {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 80px 0 48px;
+    }
+
+    .not-found-icon {
+      font-size: 56px;
+      margin-bottom: 24px;
+      opacity: 0.6;
+    }
+
+    .not-found-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .not-found-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
     @media (max-width: 480px) {
       .container { padding: 0 20px 32px; }
       .venue-image { height: 240px; }
@@ -554,22 +664,22 @@
   </style>
 </head>
 <body>
-  {% if plan.share_image_url %}
-  <div class="share-cover" id="shareCover" onclick="revealPlan()">
-    <img class="share-cover-image" src="{{ plan.share_image_url }}" alt="Plan">
-    <div class="share-cover-hint">
-      <span>Tap to view plan</span>
-      <div class="share-cover-hint-arrow"></div>
-    </div>
-  </div>
-  {% endif %}
-
-  <div class="container plan-content" id="planContent">
+  <div class="container" id="planContent">
     <div class="header">
-      <div class="logo">Plan</div>
-      <h1 class="main-heading">{{ plan.headline|default:"Your Curated Evening" }}</h1>
-      <span class="success-badge">Strong match for your vibe</span>
-      <div class="plan-meta">
+      <div class="logo">Outtie</div>
+    </div>
+
+    {% if not plan %}
+    <div class="not-found">
+      <div class="not-found-icon">🗺️</div>
+      <h1 class="not-found-title">This plan no longer exists</h1>
+      <p class="not-found-subtitle">It may have been deleted. Open the app to build a new one.</p>
+    </div>
+
+    {% else %}
+    <h1 class="main-heading">{{ plan.headline|default:"Your Curated Evening" }}</h1>
+    <span class="success-badge">Strong match for your vibe</span>
+    <div class="plan-meta" style="margin-bottom: 24px;">
         {% if plan_area_display %}
         <div class="plan-meta-item">
           <span>📍</span>
@@ -583,9 +693,21 @@
         </div>
         {% endif %}
       </div>
-    </div>
 
     <main>
+      {% if plan.share_image_url %}
+      <div class="share-card">
+        <p class="share-card-label">Share this plan</p>
+        <div class="venue-card">
+          <img src="{{ plan.share_image_url }}" alt="{{ plan.headline|default:'Your Plan' }}" class="venue-image">
+          <div class="share-card-actions">
+            <button class="share-btn" onclick="sharePlan()">↗ Share</button>
+            <button class="share-btn share-btn-secondary" onclick="copyLink()">🔗 Copy link</button>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       {% if plan.description %}
       <div class="opening-line">
         <p class="opening-closing-text">{{ plan.description }}</p>
@@ -603,7 +725,7 @@
           </div>
           {% if venue.distance_km %}
           <div class="travel-info">
-            <p class="travel-info-text"><span class="travel-info-icon">🚗</span> {{ venue.distance_km }} km</p>
+            <p class="travel-info-text">🚗 {{ venue.distance_km }} km</p>
           </div>
           {% endif %}
         </div>
@@ -614,7 +736,7 @@
           <span class="stage-title">Stage {{ forloop.counter }}</span>
           {% if venue.area %}
           <div class="divider-dot"></div>
-          <span class="stage-area">📍 {{ venue.area }}{% if plan.city %}, {{ plan.city }}{% endif %}</span>
+          <span class="stage-area">📍 {{ venue.area }}{% if plan.city %}, {{ plan.city.name }}{% endif %}</span>
           {% endif %}
         </div>
 
@@ -655,17 +777,44 @@
       {% endif %}
 
       <div class="cta-section">
-        <h2 class="cta-title">View Full Plan</h2>
-        <p class="cta-subtitle">Download the app to explore venues, get directions, and more</p>
-        <div class="app-buttons">
-          <a href="https://apps.apple.com/app/your-app-id" class="app-button">Download for iOS</a>
-          <a href="https://play.google.com/store/apps/details?id=your.app.id" class="app-button">Download for Android</a>
+        <h2 class="cta-title">Outtie is <span>coming soon</span></h2>
+        <p class="cta-subtitle">Tell us your vibe — we'll build you a day out, evening, or night on the town that fits. Discover thousands of unique possibilities across your city — no two <span style="color:var(--accent);font-weight:600;">outings</span> are the same. Every plan is shareable as a card so you can send it to friends or loved ones before you've even made plans to meet.</p>
+        <div class="store-buttons">
+          <div class="store-button">
+            <span class="store-button-label">Coming soon on</span>
+            <span class="store-button-name">App Store &amp; Google Play</span>
+          </div>
+        </div>
+
+        <div class="screenshots">
+          <img class="screenshot" src="https://storage.googleapis.com/plan-venue-images/static-resources/152shots_so.png" alt="App screenshot">
+          <img class="screenshot" src="https://storage.googleapis.com/plan-venue-images/static-resources/483shots_so.png" alt="App screenshot">
+        </div>
+
+        <div class="notify-form" id="notifyForm">
+          <p class="notify-form-title">Notify me when it's live</p>
+          <p class="notify-form-subtitle">Drop your email and we'll let you know the moment we are live!</p>
+
+          <input class="notify-input" id="notifyEmail" type="email" placeholder="Your email address" autocomplete="email">
+          <p class="notify-error" id="emailError">Please enter a valid email address.</p>
+
+          <input class="notify-input" id="notifyCity" type="text" placeholder="Your city" autocomplete="address-level2">
+          <p class="notify-error" id="cityError">Please enter your city.</p>
+
+          <button class="notify-submit" id="notifySubmit" onclick="submitWaitlist()">Notify me</button>
+
+          <div class="notify-success" id="notifySuccess">
+            <div class="notify-success-icon">🎉</div>
+            <p class="notify-success-text">You're on the list!</p>
+            <p class="notify-success-sub">We'll email you as soon as we launch.</p>
+          </div>
         </div>
       </div>
     </main>
+    {% endif %}
 
     <footer class="footer">
-      <p>© 2026 Plan. All rights reserved.</p>
+      <p>© 2026 Outtie. All rights reserved.</p>
     </footer>
 
     <!-- Venue Detail Modal (bottom sheet) -->
@@ -707,17 +856,23 @@
   {{ venues|json_script:"venues-data" }}
 
   <script>
-    function revealPlan() {
-      var cover = document.getElementById('shareCover');
-      var content = document.getElementById('planContent');
-      if (cover) cover.classList.add('hidden');
-      if (content) content.classList.add('visible');
+    function sharePlan() {
+      if (navigator.share) {
+        navigator.share({
+          title: '{{ plan.headline|default:"Your Plan"|escapejs }}',
+          url: window.location.href
+        }).catch(function() {});
+      } else {
+        copyLink();
+      }
     }
 
-    // If no share image, show content immediately
-    if (!document.getElementById('shareCover')) {
-      var content = document.getElementById('planContent');
-      if (content) content.classList.add('visible');
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(function() {
+        var btn = document.querySelector('.share-btn-secondary');
+        btn.textContent = '✓ Copied!';
+        setTimeout(function() { btn.innerHTML = '🔗 Copy link'; }, 2000);
+      });
     }
 
     var VENUES = JSON.parse(document.getElementById('venues-data').textContent);
@@ -815,6 +970,57 @@
     document.querySelectorAll('.stage-transition').forEach(function(el) {
       transitionObserver.observe(el);
     });
+
+    function submitWaitlist() {
+      var emailEl = document.getElementById('notifyEmail');
+      var cityEl  = document.getElementById('notifyCity');
+      var emailErr = document.getElementById('emailError');
+      var cityErr  = document.getElementById('cityError');
+      var btn = document.getElementById('notifySubmit');
+
+      var email = emailEl.value.trim();
+      var city  = cityEl.value.trim();
+      var valid = true;
+
+      // Reset
+      emailEl.classList.remove('error'); emailErr.style.display = 'none';
+      cityEl.classList.remove('error');  cityErr.style.display  = 'none';
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.classList.add('error'); emailErr.style.display = 'block';
+        valid = false;
+      }
+      if (!city) {
+        cityEl.classList.add('error'); cityErr.style.display = 'block';
+        valid = false;
+      }
+      if (!valid) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      fetch('/api/join-waitlist/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, city: city })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        document.getElementById('notifyForm').querySelector('.notify-form-title').style.display = 'none';
+        document.getElementById('notifyForm').querySelector('.notify-form-subtitle').style.display = 'none';
+        emailEl.style.display = 'none'; emailErr.style.display = 'none';
+        cityEl.style.display  = 'none'; cityErr.style.display  = 'none';
+        btn.style.display = 'none';
+        var successEl = document.getElementById('notifySuccess');
+        successEl.style.display = 'block';
+        successEl.querySelector('.notify-success-text').textContent = data.message || "You're on the list!";
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Notify me';
+        alert('Something went wrong. Please try again.');
+      });
+    }
   </script>
 </body>
 </html>

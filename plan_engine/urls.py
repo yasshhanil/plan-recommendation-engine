@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from recommendations import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('recommendations.urls')),
+    path('plan/<uuid:token>/', views.plan_landing_page, name='plan_landing_page'),
 ]
