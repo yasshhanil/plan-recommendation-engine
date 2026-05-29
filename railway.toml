@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py migrate && echo 'MIGRATE OK' && python -c \"import plan_engine.wsgi; print('WSGI OK')\" && echo 'STARTING GUNICORN' && gunicorn plan_engine.wsgi"
+startCommand = "python manage.py migrate && gunicorn plan_engine.wsgi"
