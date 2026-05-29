@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py collectstatic --noinput && python manage.py migrate && echo 'Starting gunicorn...' && gunicorn plan_engine.wsgi --bind 0.0.0.0:8000 --log-level debug"
+startCommand = "python manage.py migrate && gunicorn plan_engine.wsgi --bind 0.0.0.0:8000"

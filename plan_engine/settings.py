@@ -184,8 +184,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
-    json.loads(os.environ["GCS_CREDENTIALS"])
+_gcs_credentials_json = os.environ.get("GCS_CREDENTIALS")
+GS_CREDENTIALS = (
+    service_account.Credentials.from_service_account_info(json.loads(_gcs_credentials_json))
+    if _gcs_credentials_json else None
 )
 
 # Disable urllib3 debug logs
