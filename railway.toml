@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py migrate && gunicorn plan_engine.wsgi --log-level info --access-logfile -"
+startCommand = "python manage.py migrate && echo 'MIGRATE OK' && python -c \"import plan_engine.wsgi; print('WSGI OK')\" && echo 'STARTING GUNICORN' && gunicorn plan_engine.wsgi"
