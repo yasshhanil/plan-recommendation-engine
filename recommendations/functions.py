@@ -164,40 +164,44 @@ def get_energy_transition(previous_tags: Dict, current_tags: Dict) -> Optional[s
     return None
 
 
-def ensure_category_tags_prioritized(template_weights: Dict, input_tags: Dict) -> Dict:
+def ensure_input_tags_prioritized(template_weights: Dict, input_tags: Dict) -> Dict:
     """
-    Ensure input category tags are prioritized in stage_1 weights.
-    If input category tags are missing or not in top 2, make them the highest weight.
-    
-    Args:
-        template_weights: Template stage weights dictionary
-        input_tags: User input tags dictionary
-        
-    Returns:
-        Adjusted template weights dictionary
+    Ensure input category and vibe tags are prioritized in stage_1 weights.
+    If any input tag is missing from stage_1 or not in the top 2, boost it above the current max.
     """
     stage_1_weights = template_weights.get('stage_1', {})
+
     stage_1_category_weights = stage_1_weights.get('category_tags', {})
     input_category_tags = input_tags.get('category_tags', [])
-    
-    sorted_stage_1 = sorted(stage_1_category_weights.items(), key=lambda x: x[1], reverse=True)
-    top_2_tags = [tag for tag, _ in sorted_stage_1[:2]]
-    
-    needs_adjustment = False
-    for cat_tag in input_category_tags:
-        if cat_tag not in stage_1_category_weights or cat_tag not in top_2_tags:
-            needs_adjustment = True
-            break
-    
-    if needs_adjustment:
-        logger.info(f"Adjusting stage_1 category weights to prioritize input category tags: {input_category_tags}")
+    top_2_category = [tag for tag, _ in sorted(stage_1_category_weights.items(), key=lambda x: x[1], reverse=True)[:2]]
+    needs_category_adjustment = any(
+        tag not in stage_1_category_weights or tag not in top_2_category
+        for tag in input_category_tags
+    )
+    if needs_category_adjustment:
+        logger.info(f"Adjusting stage_1 category weights to prioritize: {input_category_tags}")
         max_weight = max(stage_1_category_weights.values()) if stage_1_category_weights else 1.0
-        for cat_tag in input_category_tags:
-            stage_1_category_weights[cat_tag] = max_weight + 1.0
+        for tag in input_category_tags:
+            stage_1_category_weights[tag] = max_weight + 1.0
         stage_1_weights['category_tags'] = stage_1_category_weights
-        template_weights['stage_1'] = stage_1_weights
-    
+
+    stage_1_vibe_weights = stage_1_weights.get('vibe_tags', {})
+    input_vibe_tags = input_tags.get('vibe_tags', [])
+    top_2_vibe = [tag for tag, _ in sorted(stage_1_vibe_weights.items(), key=lambda x: x[1], reverse=True)[:2]]
+    needs_vibe_adjustment = any(
+        tag not in stage_1_vibe_weights or tag not in top_2_vibe
+        for tag in input_vibe_tags
+    )
+    if needs_vibe_adjustment:
+        logger.info(f"Adjusting stage_1 vibe weights to prioritize: {input_vibe_tags}")
+        max_weight = max(stage_1_vibe_weights.values()) if stage_1_vibe_weights else 1.0
+        for tag in input_vibe_tags:
+            stage_1_vibe_weights[tag] = max_weight + 0.5
+        stage_1_weights['vibe_tags'] = stage_1_vibe_weights
+
+    template_weights['stage_1'] = stage_1_weights
     return template_weights
+
 
 
 def assign_weights(tags: Dict[str, List[str]]) -> Dict[str, float]:
@@ -308,7 +312,7 @@ def generate_plan_from_template(weighted_template_tags: Dict, input_tags: Dict, 
             area_name = Area.objects.get(id=area_id).name
 
 
-        venue_id_choices, selected_tags = find_venue_with_retry(stage_weights, input_tags, area_id, venue_ids)
+        venue_id_choices, selected_tags = find_venue_with_retry(stage_weights, input_tags, area_id, venue_ids, stage_weights=stage_weights)
         if venue_id_choices is None:
             continue
 
@@ -355,16 +359,17 @@ def area_switcher(area_id: int, venue_switch_chance: float, stage: int) -> tuple
     return area_id, venue_switch_chance
 
 
-def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str, List[str]], area_id: int, venue_ids: List[List[int]]) -> Optional[Dict[str, Any]]:
+def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str, List[str]], area_id: int, venue_ids: List[List[int]], stage_weights: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
     """
     Find venues by tags with retry logic
-    
+
     Args:
         weighted_tags: Dictionary of tags with their weights
         input_tags: List of input tags
         area_id: Area ID to search in
         venue_ids: List of already selected venue IDs
-        
+        stage_weights: Optional template stage weights passed through to score_venues
+
     Returns:
         Dictionary with venue choices or None if no venues found after retries
     """
@@ -372,7 +377,7 @@ def find_venue_with_retry(weighted_tags: Dict[str, float], input_tags: Dict[str,
     while retry_count < 3:
         selected_tags = select_tags_by_weight(weighted_tags, input_tags)
         logger.info(f"[find_venue_with_retry] selected_tags: {selected_tags}")
-        venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids, input_tags)
+        venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids, input_tags, stage_weights)
 
         if venue_id_choices is not None:
             return venue_id_choices, selected_tags
@@ -419,7 +424,7 @@ def select_tags_by_weight(weights: Dict[str, float], input_tags: Dict[str, List[
     return selected_tags
 
 
-def find_venue_by_tags(selected_tags: Dict[str, str], area_id: Optional[int] = None, exclude_venue_ids: Optional[List[int]] = None, input_tags: Optional[Dict[str, List[str]]] = None) -> Optional[Dict]:
+def find_venue_by_tags(selected_tags: Dict[str, str], area_id: Optional[int] = None, exclude_venue_ids: Optional[List[int]] = None, input_tags: Optional[Dict[str, List[str]]] = None, stage_weights: Optional[Dict] = None) -> Optional[Dict]:
     """
     Find venues that match the selected tags
 
@@ -441,7 +446,7 @@ def find_venue_by_tags(selected_tags: Dict[str, str], area_id: Optional[int] = N
         venues = Venue.objects.filter(area_id=area_id)
 
     special_tags_filtered = filter_based_on_special_tags(venues, input_tags)
-    venue_scores = score_venues(special_tags_filtered, selected_tags)
+    venue_scores = score_venues(special_tags_filtered, selected_tags, stage_weights, input_tags)
 
     if not venue_scores:
         return None
@@ -520,43 +525,73 @@ def select_scored_venues(venue_scores: List[tuple]) -> Dict[str, Any]:
     }
 
 
-def score_venues(venues: List[Venue], selected_tags: Dict[str, str]) -> List[tuple]:
+def score_venues(venues: List[Venue], selected_tags: Dict[str, str], stage_weights: Optional[Dict] = None, input_tags: Optional[Dict] = None) -> List[tuple]:
     """
     Score venues based on tag matches using weighted scoring
-    
+
     Args:
         venues: List of Venue objects
         selected_tags: Dictionary with one selected tag per category
-        
+        stage_weights: Optional per-tag weights from the active template stage; when
+                       provided, each tag's contribution is scaled by its relative
+                       importance within that tag type (highest-weight tag scores the
+                       full flat weight; others score proportionally less).
+        input_tags: Original user input tags; used for price conflict penalty so the
+                    check is against what the user actually asked for, not a sampled tag.
+
     Returns:
         List of (venue_id, score) tuples sorted by score (highest first)
     """
     venue_scores = []
-    
+
     for venue in venues:
-        venue_tags = {}
-        
         venue_tags = json.loads(venue.tags) if venue.tags else {"category_tags": [], "vibe_tags": [], "special_tags": [], "price_tags": []}
-        
+
         venue_category_tags = venue_tags.get('category_tags', [])
         user_selected_category_tag = selected_tags.get('category_tags', '')
-       
-        if user_selected_category_tag in venue_category_tags:
-            tag_score = venue_scoring_weights.get('category_tags', 0)
 
+        if user_selected_category_tag in venue_category_tags:
+            base_cat = venue_scoring_weights.get('category_tags', 0)
+            if stage_weights and 'category_tags' in stage_weights:
+                cat_weights = stage_weights['category_tags']
+                max_cat = max(cat_weights.values(), default=1.0)
+                multiplier = cat_weights.get(user_selected_category_tag, 0) / max_cat if max_cat > 0 else 1.0
+                tag_score = base_cat * multiplier
+            else:
+                tag_score = base_cat
+
+            non_category_matches = 0
             for tag_type, selected_tag in selected_tags.items():
                 if tag_type != 'category_tags' and selected_tag in venue_tags.get(tag_type, []):
-                    tag_score += venue_scoring_weights.get(tag_type, 0)
+                    base = venue_scoring_weights.get(tag_type, 0)
+                    if stage_weights and tag_type in stage_weights:
+                        type_weights = stage_weights[tag_type]
+                        max_w = max(type_weights.values(), default=1.0)
+                        multiplier = type_weights.get(selected_tag, 0) / max_w if max_w > 0 else 1.0
+                        tag_score += base * multiplier
+                    else:
+                        tag_score += base
+                    non_category_matches += 1
 
-            # Penalise venues whose price tier directly conflicts with the user's preference
+            tag_score += non_category_matches * 0.1
+
+            for tag_type, user_tag_list in (input_tags or {}).items():
+                if not isinstance(user_tag_list, list):
+                    continue
+                for tag in user_tag_list:
+                    if tag != selected_tags.get(tag_type) and tag in venue_tags.get(tag_type, []):
+                        tag_score += 0.15
+
             price_opposites = {'upscale': 'affordable', 'affordable': 'upscale'}
-            user_price = selected_tags.get('price_tags', '')
+            user_price = (input_tags or selected_tags).get('price_tags', '')
+            if isinstance(user_price, list):
+                user_price = user_price[0] if user_price else ''
             opposing = price_opposites.get(user_price)
             if opposing and opposing in venue_tags.get('price_tags', []):
                 tag_score -= 1.4
 
             venue_scores.append((venue.id, tag_score))
-    
+
     venue_scores.sort(key=lambda x: x[1], reverse=True)
     return venue_scores
 

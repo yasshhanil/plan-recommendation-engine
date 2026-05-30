@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outtie — Your night out, planned.</title>
+
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Outtie — Your night out, planned.">
+  <meta property="og:description" content="Tell us your vibe and we'll build the perfect day out, evening, or night on the town.">
+
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Outtie — Your night out, planned.">
+  <meta name="twitter:description" content="Tell us your vibe and we'll build the perfect day out, evening, or night on the town.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F5F7FA;
+      --card: #FFFFFF;
+      --input-surface: #EEEEF3;
+      --accent: #FF6B2B;
+      --success: #22C55E;
+      --text-primary: #1A1A2E;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --radius-card: 20px;
+      --radius-pill: 999px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text-primary);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+
+    /* ── Header ── */
+    .header { padding: 48px 0 40px; }
+
+    .logo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .hero-label {
+      display: inline-block;
+      background: rgba(255, 107, 43, 0.1);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 16px;
+    }
+
+    .hero-heading {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero-heading span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 0;
+    }
+
+    /* ── Screenshots ── */
+    .screenshots {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 36px 0;
+    }
+
+    .screenshot {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+      display: block;
+    }
+
+    /* ── Store badge ── */
+    .store-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .store-button {
+      background: var(--input-surface);
+      color: var(--text-muted);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 14px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: default;
+      font-family: inherit;
+    }
+
+    .store-button-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .store-button-name  { font-size: 15px; font-weight: 700; color: var(--text-secondary); }
+
+    /* ── Notify form ── */
+    .notify-form {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+
+    .notify-form-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .notify-form-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .notify-input {
+      width: 100%;
+      background: var(--input-surface);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: var(--text-primary);
+      font-family: inherit;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .notify-input::placeholder { color: var(--text-muted); }
+    .notify-input:focus { border-color: var(--accent); }
+    .notify-input.error { border-color: #EF4444; }
+
+    .notify-error {
+      font-size: 12px;
+      color: #EF4444;
+      margin-top: -6px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .notify-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+
+    .notify-submit:hover { opacity: 0.88; }
+    .notify-submit:disabled { opacity: 0.5; cursor: default; }
+
+    .notify-success {
+      display: none;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .notify-success-icon { font-size: 32px; margin-bottom: 8px; }
+
+    .notify-success-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--success);
+    }
+
+    .notify-success-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── Footer ── */
+    .footer { text-align: center; padding: 24px 0 0; color: var(--text-muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Outtie</div>
+      <span class="hero-label">Coming soon</span>
+      <h1 class="hero-heading">Your night out,<br><span>planned.</span></h1>
+      <p class="hero-sub">Tell us your vibe — we'll build you a day out, evening, or night on the town that fits. Discover thousands of unique possibilities across your city — no two <strong style="color:var(--accent);">outings</strong> are the same. Every plan is shareable as a card so you can send it to friends or loved ones before you've even made plans to meet.</p>
+    </div>
+
+    <div class="screenshots">
+      <img class="screenshot" src="https://storage.googleapis.com/plan-venue-images/static-resources/152shots_so.png" alt="Outtie app screenshot">
+      <img class="screenshot" src="https://storage.googleapis.com/plan-venue-images/static-resources/483shots_so.png" alt="Outtie app screenshot">
+    </div>
+
+    <div class="store-buttons">
+      <div class="store-button">
+        <span class="store-button-label">Coming soon on</span>
+        <span class="store-button-name">App Store &amp; Google Play</span>
+      </div>
+    </div>
+
+    <div class="notify-form" id="notifyForm">
+      <p class="notify-form-title">Notify me when it's live</p>
+      <p class="notify-form-subtitle">Drop your email and we'll let you know the moment it launches in your city.</p>
+
+      <input class="notify-input" id="notifyEmail" type="email" placeholder="Your email address" autocomplete="email">
+      <p class="notify-error" id="emailError">Please enter a valid email address.</p>
+
+      <input class="notify-input" id="notifyCity" type="text" placeholder="Your city" autocomplete="address-level2">
+      <p class="notify-error" id="cityError">Please enter your city.</p>
+
+      <button class="notify-submit" id="notifySubmit" onclick="submitWaitlist()">Notify me</button>
+
+      <div class="notify-success" id="notifySuccess">
+        <div class="notify-success-icon">🎉</div>
+        <p class="notify-success-text">You're on the list!</p>
+        <p class="notify-success-sub">We'll email you as soon as we launch.</p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>© 2026 Outtie. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    function submitWaitlist() {
+      var emailEl = document.getElementById('notifyEmail');
+      var cityEl  = document.getElementById('notifyCity');
+      var emailErr = document.getElementById('emailError');
+      var cityErr  = document.getElementById('cityError');
+      var btn = document.getElementById('notifySubmit');
+
+      var email = emailEl.value.trim();
+      var city  = cityEl.value.trim();
+      var valid = true;
+
+      emailEl.classList.remove('error'); emailErr.style.display = 'none';
+      cityEl.classList.remove('error');  cityErr.style.display  = 'none';
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailEl.classList.add('error'); emailErr.style.display = 'block';
+        valid = false;
+      }
+      if (!city) {
+        cityEl.classList.add('error'); cityErr.style.display = 'block';
+        valid = false;
+      }
+      if (!valid) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      fetch('/api/join-waitlist/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, city: city })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        document.getElementById('notifyForm').querySelector('.notify-form-title').style.display = 'none';
+        document.getElementById('notifyForm').querySelector('.notify-form-subtitle').style.display = 'none';
+        emailEl.style.display = 'none'; emailErr.style.display = 'none';
+        cityEl.style.display  = 'none'; cityErr.style.display  = 'none';
+        btn.style.display = 'none';
+        var successEl = document.getElementById('notifySuccess');
+        successEl.style.display = 'block';
+        successEl.querySelector('.notify-success-text').textContent = data.message || "You're on the list!";
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Notify me';
+        alert('Something went wrong. Please try again.');
+      });
+    }
+  </script>
+</body>
+</html>

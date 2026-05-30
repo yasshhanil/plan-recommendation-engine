@@ -2,7 +2,7 @@
 Constants for the Plan Recommendation Engine
 """
 
-VENUE_SWITCH_PROBABILITY = 0.9
+VENUE_SWITCH_PROBABILITY = 0.3
 
 CATEGORY_TAGS = [
     'cafe', 'restaurant', 'dessert', 'bar', 'activity', 'shopping'

@@ -402,14 +402,13 @@
     /* ── App screenshots ── */
     .screenshots {
       display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 28px;
-      overflow: hidden;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
     }
 
     .screenshot {
-      width: 48%;
+      width: 100%;
       border-radius: 20px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.13);
       display: block;
@@ -626,6 +625,40 @@
 
     .modal-maps-button:hover { opacity: 0.85; }
 
+    /* ── User input tags ── */
+    .user-tags-section {
+      margin-bottom: 24px;
+    }
+
+    .user-tags-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .user-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .user-tag {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .user-tag-vibe     { background: rgba(124, 58, 237, 0.1); color: #7C3AED; }
+    .user-tag-category { background: rgba(37, 99, 235, 0.1);  color: #2563EB; }
+    .user-tag-special  { background: rgba(8, 145, 178, 0.1);  color: #0891B2; }
+    .user-tag-price    { background: rgba(5, 150, 105, 0.1);  color: #059669; }
+
     /* ── Not found state ── */
     .not-found {
       display: flex;
@@ -694,6 +727,22 @@
         {% endif %}
       </div>
 
+    {% if plan.user_tags %}
+    {% with t=plan.user_tags %}
+    {% if t.vibe_tags or t.category_tags or t.special_tags or t.price_tags %}
+    <div class="user-tags-section">
+      <p class="user-tags-label">Your vibe</p>
+      <div class="user-tags">
+        {% for tag in t.vibe_tags %}<span class="user-tag user-tag-vibe">{{ tag|cut:"_" }}</span>{% endfor %}
+        {% for tag in t.category_tags %}<span class="user-tag user-tag-category">{{ tag|cut:"_" }}</span>{% endfor %}
+        {% for tag in t.special_tags %}<span class="user-tag user-tag-special">{{ tag|cut:"_" }}</span>{% endfor %}
+        {% for tag in t.price_tags %}<span class="user-tag user-tag-price">{{ tag|cut:"_" }}</span>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+
     <main>
       {% if plan.share_image_url %}
       <div class="share-card">
@@ -720,9 +769,11 @@
       {% for venue in venues %}
         {% if not forloop.first %}
         <div class="stage-transition">
+          {% if venue.area_changed %}
           <div class="area-switch">
             <p class="area-switch-text">{% if venue.area %}Next stop · {{ venue.area }}{% else %}Next stop{% endif %}</p>
           </div>
+          {% endif %}
           {% if venue.distance_km %}
           <div class="travel-info">
             <p class="travel-info-text">🚗 {{ venue.distance_km }} km</p>
@@ -736,7 +787,7 @@
           <span class="stage-title">Stage {{ forloop.counter }}</span>
           {% if venue.area %}
           <div class="divider-dot"></div>
-          <span class="stage-area">📍 {{ venue.area }}{% if plan.city %}, {{ plan.city.name }}{% endif %}</span>
+          <span class="stage-area">📍 {{ venue.area }}</span>
           {% endif %}
         </div>
 

@@ -18,7 +18,7 @@ from .functions import (
     assign_weights,
     generate_plan,
     generate_plan_from_template,
-    ensure_category_tags_prioritized,
+    ensure_input_tags_prioritized,
     generate_share_image
 )
 from django.template.loader import render_to_string
@@ -121,7 +121,7 @@ def template_recommendation(request):
                 template_weights = PLAN_STAGE_WEIGHTS_2_STAGE.get(template_id, {}).get(confidence_level, {})
             else:
                 template_weights = PLAN_STAGE_WEIGHTS_3_STAGE.get(template_id, {}).get(confidence_level, {})
-            template_weights = ensure_category_tags_prioritized(template_weights, input_tags)
+            template_weights = ensure_input_tags_prioritized(template_weights, input_tags)
             plan_result = generate_plan_from_template(template_weights, input_tags, area_id, num_recommendations=number_of_stages)
 
         result = {
@@ -396,9 +396,10 @@ def plan_landing_page(request, token):
     # Fetch venues if plan has venue_ids, preserving order and parsing tags
     venues = []
     if plan.ids:
-        venue_map = {v.id: v for v in Venue.objects.filter(id__in=plan.ids)}
+        venue_map = {v.id: v for v in Venue.objects.select_related('area').filter(id__in=plan.ids)}
         plan_areas = plan.area if isinstance(plan.area, list) else []
         prev_lat = prev_lng = None
+        prev_area = None
         for i, venue_id in enumerate(plan.ids):
             venue = venue_map.get(venue_id)
             if not venue:
@@ -413,6 +414,16 @@ def plan_landing_page(request, token):
             if prev_lat is not None and venue.lat and venue.lng:
                 distance_km = _haversine(prev_lat, prev_lng, float(venue.lat), float(venue.lng))
             raw_area = plan_areas[i] if i < len(plan_areas) else (plan_areas[-1] if plan_areas else None)
+            db_area = venue.area.name if venue.area else None
+            stored_area = _fmt_area(raw_area)
+            city_name = plan.city.name if plan.city else None
+            # Prefer DB area; only use stored area if it differs from the city name
+            if db_area:
+                area_name = db_area
+            elif stored_area and stored_area.lower() != (city_name or '').lower():
+                area_name = stored_area
+            else:
+                area_name = city_name
             venues.append({
                 'name': venue.name,
                 'summary': venue.summary,
@@ -422,12 +433,22 @@ def plan_landing_page(request, token):
                 'rating': float(venue.rating) if venue.rating is not None else None,
                 'price_display': price_symbols.get(venue.price_level, ''),
                 'tags': tags,
-                'area': _fmt_area(raw_area),
+                'area': area_name,
+                'area_changed': area_name != prev_area,
                 'distance_km': distance_km,
             })
             prev_lat, prev_lng = venue.lat, venue.lng
+            prev_area = area_name
 
-    plan_area_display = ', '.join(_fmt_area(a) for a in (plan.area or []) if a)
+    _city_name_lower = (plan.city.name if plan.city else '').lower()
+    _seen = set()
+    _display_areas = []
+    for a in (plan.area or []):
+        fmt = _fmt_area(a)
+        if fmt and fmt.lower() not in _seen and fmt.lower() != _city_name_lower:
+            _seen.add(fmt.lower())
+            _display_areas.append(fmt)
+    plan_area_display = ', '.join(_display_areas) or (plan.city.name if plan.city else '')
 
     context = {
         'plan': plan,
@@ -543,6 +564,10 @@ def preview_share_card(request):
         return HttpResponse(html_content, content_type='text/html')
 
     return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+def home(request):
+    return render(request, 'home.html')
 
 
 @csrf_exempt

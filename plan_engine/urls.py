@@ -21,5 +21,6 @@ from recommendations import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('recommendations.urls')),
+    path('', views.home, name='home'),
     path('plan/<uuid:token>/', views.plan_landing_page, name='plan_landing_page'),
 ]
