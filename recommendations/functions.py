@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from playwright.sync_api import sync_playwright
 
 from .models import Venue, Area, TAGS_CONSTANT
-from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS
+from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS, CATEGORY_SEQUENCE_WEIGHT
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +162,95 @@ def get_energy_transition(previous_tags: Dict, current_tags: Dict) -> Optional[s
             return random.choice(transitions)
 
     return None
+
+
+def assign_categories_to_stages(category_tags: List[str], num_stages: int) -> List[str]:
+    """
+    Sort user-selected categories by their natural sequence position and spread
+    them evenly across the requested number of stages.
+
+    Examples (3 stages):
+      ['bar', 'cafe', 'dessert'] → ['cafe', 'bar', 'dessert']
+      ['cafe']                   → ['cafe', 'cafe', 'cafe']
+      ['cafe', 'bar']            → ['cafe', 'bar', 'bar']
+    """
+    if not category_tags:
+        return ['restaurant'] * num_stages
+
+    sorted_cats = sorted(category_tags, key=lambda c: CATEGORY_SEQUENCE_WEIGHT.get(c, 3.0))
+
+    if num_stages == 1:
+        return [sorted_cats[0]]
+
+    if len(sorted_cats) >= num_stages:
+        step = len(sorted_cats) / num_stages
+        return [sorted_cats[int(i * step)] for i in range(num_stages)]
+
+    # Fewer categories than stages — pad with the last (latest) category
+    return sorted_cats + [sorted_cats[-1]] * (num_stages - len(sorted_cats))
+
+
+def generate_plan_from_intent(input_tags: Dict, area_id: Optional[int], num_stages: int = 2) -> Dict:
+    """
+    Generate a plan using the user's exact tags rather than stochastic template sampling.
+
+    Category order across stages is determined by CATEGORY_SEQUENCE_WEIGHT so the
+    sequence always flows naturally (opener → anchor → closer). Venue scoring at
+    each stage uses the full input_tags set directly.
+    """
+    category_tags = input_tags.get('category_tags', [])
+    stage_categories = assign_categories_to_stages(category_tags, num_stages)
+    logger.info(f'[generate_plan_from_intent] stage order: {stage_categories}')
+
+    # Rotate through user's tags per stage so each stage gets a different primary
+    # emphasis. Stage 0 → tag[0], stage 1 → tag[1], etc. (cycles if fewer tags than stages).
+    def _nth(tag_type: str, n: int) -> str:
+        vals = input_tags.get(tag_type, [])
+        return vals[n % len(vals)] if vals else ''
+
+    area = Area.objects.select_related('city').get(id=area_id)
+    area_name = area.name
+    state = area.city.state if area.city else ''
+
+    venue_ids: List[List[int]] = []
+    venue_data = []
+    venue_switch_chance = VENUE_SWITCH_PROBABILITY
+    previous_selected_tags = None
+
+    for i, category in enumerate(stage_categories):
+        if i > 0:
+            area_id, venue_switch_chance = area_switcher(area_id, venue_switch_chance, i + 1)
+            area_name = Area.objects.get(id=area_id).name
+
+        selected_tags = {
+            'category_tags': category,
+            'vibe_tags':     _nth('vibe_tags', i),
+            'special_tags':  _nth('special_tags', i),
+            'price_tags':    _nth('price_tags', i),
+        }
+        logger.info(f'[generate_plan_from_intent] stage {i+1} selected_tags: {selected_tags}')
+
+        venue_id_choices = find_venue_by_tags(selected_tags, area_id, venue_ids, input_tags)
+
+        if venue_id_choices is None:
+            logger.warning(f'[generate_plan_from_intent] no venues found for stage {i+1}, skipping')
+            continue
+
+        selected_venue_ids = [v['id'] for v in venue_id_choices['selected_venues']]
+        venue_ids.append(selected_venue_ids)
+
+        transition = None
+        if previous_selected_tags:
+            transition = get_energy_transition(previous_selected_tags, selected_tags)
+
+        venue_data.append((venue_id_choices['selected_venues'], area_name, transition))
+        previous_selected_tags = selected_tags
+
+    return {
+        'venue_data': venue_data,
+        'stage_categories': stage_categories,
+        'state': state,
+    }
 
 
 def ensure_input_tags_prioritized(template_weights: Dict, input_tags: Dict) -> Dict:
@@ -724,5 +813,5 @@ def generate_share_image(venue_ids: List[int], city: str, area: List[str], plan_
         return public_url
 
     except Exception as e:
-        logger.error(f"Error generating share image for plan {plan_id}: {e}")
+        logger.exception(f"[generate_share_image] Failed for plan {plan_id}: {e}")
         return None

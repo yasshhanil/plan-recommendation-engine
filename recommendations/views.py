@@ -18,6 +18,7 @@ from .functions import (
     assign_weights,
     generate_plan,
     generate_plan_from_template,
+    generate_plan_from_intent,
     ensure_input_tags_prioritized,
     generate_share_image
 )
@@ -218,10 +219,14 @@ def save_plan(request):
             Venue.objects.filter(id__in=ids).update(saved_count_this_month=django_models.F('saved_count_this_month') + 1)
 
         # Generate shareable image
+        logger.info(f"[save_plan] Generating share image for plan {plan.id}, ids={ids}")
         share_image_url = generate_share_image(ids, city_obj.name, areas, plan.id, state, headline)
         if share_image_url:
             plan.share_image_url = share_image_url
             plan.save()
+            logger.info(f"[save_plan] Share image saved: {share_image_url}")
+        else:
+            logger.warning(f"[save_plan] Share image generation returned None for plan {plan.id}")
 
         return JsonResponse({
             "success": True,
@@ -577,6 +582,68 @@ def test_plan(request):
         'vibe_tags': VIBE_TAGS,
         'special_tags': SPECIAL_TAGS,
         'price_tags': PRICE_TAGS,
+    })
+
+
+@csrf_exempt
+def intent_recommendation(request):
+    """
+    Intent-based recommendation endpoint.
+
+    Unlike /api/template/, this does not sample tags stochastically. The user's
+    category tags are ordered by their natural sequence position (cafe → activity →
+    restaurant → bar → dessert) and assigned one per stage. Venue scoring at each
+    stage uses the full input_tags set directly.
+
+    POST body:
+      {
+        "tags":    { "category_tags": ["cafe","bar"], "vibe_tags": ["romantic"], ... },
+        "city_id": 1,          // optional — random area from city
+        "area_id": 5,          // optional — specific area
+        "stages":  2           // optional, default 2
+      }
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except Exception:
+        body = {}
+
+    tags    = body.get('tags', None)
+    area_id = body.get('area_id', None)
+    city_id = body.get('city_id', None)
+    stages  = int(body.get('stages', 3))
+
+    if not area_id and city_id:
+        random_area = Area.objects.filter(city_id=city_id, is_active=True).order_by('?').first()
+        if random_area:
+            area_id = random_area.id
+
+    if not area_id:
+        return JsonResponse({'error': 'area_id or city_id required'}, status=400)
+
+    if not tags:
+        input_tags = {
+            'category_tags': ['cafe', 'bar'],
+            'vibe_tags':     ['casual'],
+            'special_tags':  [],
+            'price_tags':    ['moderate'],
+        }
+    elif isinstance(tags, dict):
+        input_tags = tags
+    else:
+        input_tags = json.loads(tags)
+
+    logger.info(f'[intent_recommendation] input_tags={input_tags} stages={stages}')
+
+    plan_result = generate_plan_from_intent(input_tags, area_id, num_stages=stages)
+
+    return JsonResponse({
+        'venue_data':       plan_result.get('venue_data', []),
+        'stage_categories': plan_result.get('stage_categories', []),
+        'state':            plan_result.get('state', ''),
     })
 
 

@@ -106,6 +106,11 @@
 
   <section>
     <h2>3. Generate</h2>
+    <label>Mode</label>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button id="modeTemplate" onclick="setMode('template')" style="flex:1;font-weight:700;background:var(--text-primary);color:#fff;border-color:var(--text-primary);">Template</button>
+      <button id="modeIntent"   onclick="setMode('intent')"   style="flex:1;font-weight:700;">Intent</button>
+    </div>
     <button class="primary" onclick="generatePlan()" id="btnGenerate">Generate Plan</button>
     <button onclick="regenerate()" id="btnRegen" disabled>Regenerate</button>
     <button onclick="savePlan()" id="btnSave" disabled>Save Plan</button>
@@ -160,6 +165,17 @@
   var currentResult = null;
   var currentCityId = null;
   var citiesData = {};
+  var currentMode = 'template';
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeTemplate').style.background = mode === 'template' ? 'var(--text-primary)' : 'var(--input-surface)';
+    document.getElementById('modeTemplate').style.color      = mode === 'template' ? '#fff' : 'var(--text-primary)';
+    document.getElementById('modeTemplate').style.borderColor= mode === 'template' ? 'var(--text-primary)' : 'var(--input-surface)';
+    document.getElementById('modeIntent').style.background   = mode === 'intent'   ? 'var(--text-primary)' : 'var(--input-surface)';
+    document.getElementById('modeIntent').style.color        = mode === 'intent'   ? '#fff' : 'var(--text-primary)';
+    document.getElementById('modeIntent').style.borderColor  = mode === 'intent'   ? 'var(--text-primary)' : 'var(--input-surface)';
+  }
 
   // ── Tabs ──
   function switchTab(name) {
@@ -216,9 +232,11 @@
     if (!cityId) { setStatus('Select a city first.', true); return; }
     var areaId = document.getElementById('areaSelect').value || null;
     var tags = getSelectedTags();
-    setStatus('Generating...');
+    setStatus('Generating (' + currentMode + ')...');
     document.getElementById('btnGenerate').disabled = true;
-    fetch('/api/template/', {
+
+    var endpoint = currentMode === 'intent' ? '/api/intent/' : '/api/template/';
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tags: tags, city_id: parseInt(cityId), area_id: areaId ? parseInt(areaId) : null })
@@ -228,7 +246,11 @@
       document.getElementById('btnRegen').disabled = false;
       document.getElementById('btnSave').disabled = false;
       document.getElementById('btnGenerate').disabled = false;
-      setStatus('Done. Template: ' + data.template_id + ' | Confidence: ' + data.confidence_level);
+      if (currentMode === 'intent') {
+        setStatus('Done. Sequence: ' + (data.stage_categories || []).join(' → '));
+      } else {
+        setStatus('Done. Template: ' + data.template_id + ' | Confidence: ' + data.confidence_level);
+      }
     }).catch(function(e) {
       setStatus('Error: ' + e, true);
       document.getElementById('btnGenerate').disabled = false;
@@ -245,9 +267,9 @@
 
   function renderResult(data) {
     document.getElementById('resultSection').style.display = 'block';
-    document.getElementById('planMeta').innerHTML =
-      'template: ' + (data.template_id || '—') + ' | confidence: ' + (data.confidence_level || '—') +
-      ' | score: ' + ((data.template_score || 0).toFixed(2));
+    document.getElementById('planMeta').innerHTML = currentMode === 'intent'
+      ? 'mode: intent | sequence: ' + (data.stage_categories || []).join(' → ')
+      : 'template: ' + (data.template_id || '—') + ' | confidence: ' + (data.confidence_level || '—') + ' | score: ' + ((data.template_score || 0).toFixed(2));
 
     var stageList = Array.isArray(data.venue_data) ? data.venue_data : [];
     VENUES_FLAT = [];

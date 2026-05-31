@@ -2,7 +2,7 @@
 Constants for the Plan Recommendation Engine
 """
 
-VENUE_SWITCH_PROBABILITY = 0.3
+VENUE_SWITCH_PROBABILITY = 0.7
 
 CATEGORY_TAGS = [
     'cafe', 'restaurant', 'dessert', 'bar', 'activity', 'shopping'
@@ -26,6 +26,20 @@ TAGS_CONSTANT = {
     'vibe_tags': VIBE_TAGS,
     'special_tags': SPECIAL_TAGS,
     'price_tags': PRICE_TAGS
+}
+
+# Controls the natural position of a category within a multi-stage plan.
+# Lower = earlier in the night, higher = later.
+CATEGORY_SEQUENCE_WEIGHT = {
+    'park':        1.5,
+    'activity':    2.0,
+    'arcade':      2.0,
+    'shopping':    2.5,
+    'cinema':      2.5,
+    'cafe':        2.5,
+    'restaurant':  3.0,
+    'bar':         4.5,
+    'dessert':     5.0,
 }
 
 tag_weight_chart = {

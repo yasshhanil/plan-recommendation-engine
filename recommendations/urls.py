@@ -17,5 +17,6 @@ urlpatterns = [
     path('get-cities/', views.get_cities, name='get_cities'),
     path('preview-card/', views.preview_share_card, name='preview_share_card'),
     path('plan/<uuid:token>/', views.plan_landing_page, name='plan_landing_page_legacy'),
+    path('intent/', views.intent_recommendation, name='intent_recommendation'),
     path('join-waitlist/', views.join_waitlist, name='join_waitlist'),
 ]
