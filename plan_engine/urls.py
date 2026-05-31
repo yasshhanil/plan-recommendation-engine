@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('recommendations.urls')),
     path('', views.home, name='home'),
+    path('test/', views.test_plan, name='test_plan'),
     path('plan/<uuid:token>/', views.plan_landing_page, name='plan_landing_page'),
 ]

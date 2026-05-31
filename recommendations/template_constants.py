@@ -736,6 +736,140 @@ PLAN_STAGE_WEIGHTS_2_STAGE = {
         }
     },
 
+    "fun_date": {
+        "high": {
+            "stage_1": {
+                "category_tags": {
+                    "activity": 0.65,
+                    "arcade": 0.20,
+                    "bar": 0.10,
+                    "cafe": 0.05
+                },
+                "vibe_tags": {
+                    "lively": 0.40,
+                    "trendy": 0.30,
+                    "casual": 0.20,
+                    "romantic": 0.10
+                },
+                "special_tags": {
+                    "date_spot": 0.45,
+                    "indoor": 0.30,
+                    "late_night": 0.15,
+                    "outdoor": 0.10
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "bar": 0.45,
+                    "cafe": 0.25,
+                    "dessert": 0.20,
+                    "restaurant": 0.10
+                },
+                "vibe_tags": {
+                    "romantic": 0.35,
+                    "lively": 0.25,
+                    "trendy": 0.25,
+                    "casual": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.50,
+                    "late_night": 0.25,
+                    "indoor": 0.15,
+                    "outdoor": 0.10
+                }
+            }
+        },
+
+        "medium": {
+            "stage_1": {
+                "category_tags": {
+                    "activity": 0.55,
+                    "arcade": 0.20,
+                    "bar": 0.15,
+                    "cafe": 0.10
+                },
+                "vibe_tags": {
+                    "lively": 0.30,
+                    "trendy": 0.25,
+                    "casual": 0.25,
+                    "romantic": 0.20
+                },
+                "special_tags": {
+                    "date_spot": 0.40,
+                    "indoor": 0.30,
+                    "late_night": 0.20,
+                    "outdoor": 0.10
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "bar": 0.35,
+                    "cafe": 0.30,
+                    "dessert": 0.20,
+                    "restaurant": 0.15
+                },
+                "vibe_tags": {
+                    "romantic": 0.30,
+                    "lively": 0.25,
+                    "trendy": 0.25,
+                    "casual": 0.20
+                },
+                "special_tags": {
+                    "date_spot": 0.45,
+                    "indoor": 0.25,
+                    "late_night": 0.20,
+                    "outdoor": 0.10
+                }
+            }
+        },
+
+        "low": {
+            "stage_1": {
+                "category_tags": {
+                    "activity": 0.40,
+                    "bar": 0.25,
+                    "arcade": 0.20,
+                    "restaurant": 0.15
+                },
+                "vibe_tags": {
+                    "lively": 0.25,
+                    "casual": 0.25,
+                    "trendy": 0.25,
+                    "romantic": 0.15,
+                    "aesthetic": 0.10
+                },
+                "special_tags": {
+                    "date_spot": 0.35,
+                    "indoor": 0.25,
+                    "late_night": 0.20,
+                    "outdoor": 0.15,
+                    "group_friendly": 0.05
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "bar": 0.30,
+                    "cafe": 0.25,
+                    "dessert": 0.25,
+                    "activity": 0.20
+                },
+                "vibe_tags": {
+                    "casual": 0.25,
+                    "romantic": 0.25,
+                    "lively": 0.25,
+                    "trendy": 0.15,
+                    "aesthetic": 0.10
+                },
+                "special_tags": {
+                    "date_spot": 0.40,
+                    "indoor": 0.25,
+                    "late_night": 0.20,
+                    "outdoor": 0.15
+                }
+            }
+        }
+    },
+
     "retail_therapy": {
         "high": {
             "stage_1": {
@@ -2059,6 +2193,187 @@ PLAN_STAGE_WEIGHTS_3_STAGE = {
                     "outdoor": 0.20,
                     "date_spot": 0.10,
                     "late_night": 0.10
+                }
+            }
+        }
+    },
+
+    "fun_date": {
+        "high": {
+            "stage_1": {
+                "category_tags": {
+                    "cafe": 0.50,
+                    "restaurant": 0.30,
+                    "dessert": 0.20
+                },
+                "vibe_tags": {
+                    "romantic": 0.35,
+                    "casual": 0.30,
+                    "trendy": 0.20,
+                    "aesthetic": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.50,
+                    "indoor": 0.30,
+                    "quick_stop": 0.20
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "activity": 0.65,
+                    "arcade": 0.25,
+                    "bar": 0.10
+                },
+                "vibe_tags": {
+                    "lively": 0.40,
+                    "trendy": 0.30,
+                    "casual": 0.20,
+                    "romantic": 0.10
+                },
+                "special_tags": {
+                    "date_spot": 0.45,
+                    "indoor": 0.30,
+                    "late_night": 0.25
+                }
+            },
+            "stage_3": {
+                "category_tags": {
+                    "bar": 0.55,
+                    "dessert": 0.25,
+                    "cafe": 0.20
+                },
+                "vibe_tags": {
+                    "romantic": 0.40,
+                    "lively": 0.25,
+                    "trendy": 0.20,
+                    "casual": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.50,
+                    "late_night": 0.30,
+                    "indoor": 0.20
+                }
+            }
+        },
+
+        "medium": {
+            "stage_1": {
+                "category_tags": {
+                    "cafe": 0.40,
+                    "restaurant": 0.35,
+                    "dessert": 0.25
+                },
+                "vibe_tags": {
+                    "casual": 0.30,
+                    "romantic": 0.25,
+                    "aesthetic": 0.25,
+                    "trendy": 0.20
+                },
+                "special_tags": {
+                    "date_spot": 0.45,
+                    "indoor": 0.30,
+                    "quick_stop": 0.25
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "activity": 0.55,
+                    "arcade": 0.25,
+                    "bar": 0.20
+                },
+                "vibe_tags": {
+                    "lively": 0.35,
+                    "trendy": 0.30,
+                    "casual": 0.20,
+                    "romantic": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.40,
+                    "indoor": 0.35,
+                    "late_night": 0.25
+                }
+            },
+            "stage_3": {
+                "category_tags": {
+                    "bar": 0.45,
+                    "dessert": 0.30,
+                    "cafe": 0.25
+                },
+                "vibe_tags": {
+                    "romantic": 0.35,
+                    "lively": 0.25,
+                    "trendy": 0.25,
+                    "casual": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.45,
+                    "late_night": 0.35,
+                    "indoor": 0.20
+                }
+            }
+        },
+
+        "low": {
+            "stage_1": {
+                "category_tags": {
+                    "cafe": 0.35,
+                    "restaurant": 0.30,
+                    "activity": 0.20,
+                    "dessert": 0.15
+                },
+                "vibe_tags": {
+                    "casual": 0.30,
+                    "romantic": 0.20,
+                    "aesthetic": 0.20,
+                    "lively": 0.15,
+                    "trendy": 0.15
+                },
+                "special_tags": {
+                    "date_spot": 0.40,
+                    "indoor": 0.30,
+                    "quick_stop": 0.20,
+                    "outdoor": 0.10
+                }
+            },
+            "stage_2": {
+                "category_tags": {
+                    "activity": 0.40,
+                    "arcade": 0.25,
+                    "bar": 0.20,
+                    "restaurant": 0.15
+                },
+                "vibe_tags": {
+                    "lively": 0.25,
+                    "casual": 0.25,
+                    "trendy": 0.25,
+                    "romantic": 0.25
+                },
+                "special_tags": {
+                    "date_spot": 0.35,
+                    "indoor": 0.30,
+                    "late_night": 0.20,
+                    "outdoor": 0.15
+                }
+            },
+            "stage_3": {
+                "category_tags": {
+                    "bar": 0.35,
+                    "dessert": 0.30,
+                    "cafe": 0.20,
+                    "activity": 0.15
+                },
+                "vibe_tags": {
+                    "casual": 0.25,
+                    "romantic": 0.25,
+                    "lively": 0.25,
+                    "trendy": 0.15,
+                    "aesthetic": 0.10
+                },
+                "special_tags": {
+                    "date_spot": 0.40,
+                    "late_night": 0.30,
+                    "indoor": 0.20,
+                    "outdoor": 0.10
                 }
             }
         }

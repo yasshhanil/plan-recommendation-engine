@@ -44,6 +44,32 @@ TEMPLATE_PROFILES = {
         }
     },
 
+    "fun_date": {
+        "name": "Fun Date",
+        "description": "Active and playful date plans built around a shared experience",
+        "category_weights": {
+            "activity": 0.45,
+            "bar": 0.20,
+            "cafe": 0.15,
+            "dessert": 0.10,
+            "restaurant": 0.10
+        },
+        "vibe_weights": {
+            "lively": 0.30,
+            "trendy": 0.25,
+            "casual": 0.20,
+            "romantic": 0.15,
+            "aesthetic": 0.10
+        },
+        "special_weights": {
+            "date_spot": 0.40,
+            "indoor": 0.25,
+            "late_night": 0.20,
+            "outdoor": 0.10,
+            "quick_stop": 0.05
+        }
+    },
+
     "social_energy": {
         "name": "Social Energy",
         "description": "Lively social experiences and energetic outings",

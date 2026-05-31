@@ -570,6 +570,16 @@ def home(request):
     return render(request, 'home.html')
 
 
+def test_plan(request):
+    from .constants import CATEGORY_TAGS, VIBE_TAGS, SPECIAL_TAGS, PRICE_TAGS
+    return render(request, 'test_plan.html', {
+        'category_tags': CATEGORY_TAGS,
+        'vibe_tags': VIBE_TAGS,
+        'special_tags': SPECIAL_TAGS,
+        'price_tags': PRICE_TAGS,
+    })
+
+
 @csrf_exempt
 def join_waitlist(request):
     if request.method != 'POST':
