@@ -39,6 +39,16 @@
     .tag-vibe { background: #7C3AED; } .tag-category { background: #2563EB; } .tag-special { background: #0891B2; } .tag-price { background: #059669; }
     .venue-location { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: var(--text-muted); line-height: 1.4; }
     .stage-label { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .embedded .venue-card { flex: 0 0 200px !important; min-width: 200px !important; }
+    .embedded .venue-image { height: 130px !important; }
+    .embedded #planMeta, .embedded #status { display: none !important; }
+    .embedded .score-label { display: none !important; }
+    #spinner { display:none; flex-direction:column; align-items:center; gap:12px; padding:32px 0; }
+    #spinner .spin { width:36px; height:36px; border:3px solid var(--input-surface); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; }
+    #spinner p { font-size:13px; color:var(--text-muted); font-weight:500; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .share-btn { display:inline-block; margin-top:10px; padding:10px 20px; background:var(--accent); color:#fff; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; font-family:inherit; }
+    .dist-connector { font-size: 12px; color: var(--text-muted); font-family: monospace; text-align: center; padding: 2px 0 8px; letter-spacing: 0.02em; }
     /* ── Saved plans ── */
     .plan-row { border: 1.5px solid var(--input-surface); border-radius: 12px; padding: 12px; margin-bottom: 8px; font-size: 13px; cursor: pointer; transition: background 0.15s; }
     .plan-row:hover { background: var(--input-surface); }
@@ -79,25 +89,25 @@
   <section>
     <h2>2. Tags</h2>
     <div class="tag-group">
-      <label>Category</label>
+      <label>Category <span style="font-weight:400;text-transform:none;letter-spacing:0;">— pick 1–3</span></label>
       <div class="tags" id="tags-category">
         {% for tag in category_tags %}<span class="tag" data-group="category" onclick="toggleTag(this)">{{ tag }}</span>{% endfor %}
       </div>
     </div>
     <div class="tag-group">
-      <label>Vibe</label>
+      <label>Vibe <span style="font-weight:400;text-transform:none;letter-spacing:0;">— pick 1–3</span></label>
       <div class="tags" id="tags-vibe">
         {% for tag in vibe_tags %}<span class="tag" data-group="vibe" onclick="toggleTag(this)">{{ tag }}</span>{% endfor %}
       </div>
     </div>
     <div class="tag-group">
-      <label>Special</label>
+      <label>Special <span style="font-weight:400;text-transform:none;letter-spacing:0;">— pick up to 1</span></label>
       <div class="tags" id="tags-special">
         {% for tag in special_tags %}<span class="tag" data-group="special" onclick="toggleTag(this)">{{ tag }}</span>{% endfor %}
       </div>
     </div>
     <div class="tag-group">
-      <label>Price</label>
+      <label>Price <span style="font-weight:400;text-transform:none;letter-spacing:0;">— pick exactly 1</span></label>
       <div class="tags" id="tags-price">
         {% for tag in price_tags %}<span class="tag" data-group="price" onclick="toggleTag(this)">{{ tag }}</span>{% endfor %}
       </div>
@@ -106,11 +116,12 @@
 
   <section>
     <h2>3. Generate</h2>
-    <label>Mode</label>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button id="modeTemplate" onclick="setMode('template')" style="flex:1;font-weight:700;background:var(--text-primary);color:#fff;border-color:var(--text-primary);">Template</button>
-      <button id="modeIntent"   onclick="setMode('intent')"   style="flex:1;font-weight:700;">Intent</button>
-    </div>
+    <label>Stages</label>
+    <select id="stagesSelect" onchange="currentStages = parseInt(this.value)">
+      <option value="1">1</option>
+      <option value="2" selected>2</option>
+      <option value="3">3</option>
+    </select>
     <button class="primary" onclick="generatePlan()" id="btnGenerate">Generate Plan</button>
     <button onclick="regenerate()" id="btnRegen" disabled>Regenerate</button>
     <button onclick="savePlan()" id="btnSave" disabled>Save Plan</button>
@@ -119,6 +130,7 @@
 
   <section id="resultSection" style="display:none">
     <h2>Result</h2>
+    <div id="spinner"><div class="spin"></div><p>Building your plan...</p></div>
     <div id="planMeta" style="font-size:12px;color:#666;margin-bottom:12px;font-family:monospace;"></div>
     <div id="venueList"></div>
     <div id="shareLink" style="margin-top:10px;font-size:12px;font-family:monospace;"></div>
@@ -162,20 +174,16 @@
 </div>
 
 <script>
+  if (new URLSearchParams(window.location.search).get('embed') === '1') {
+    document.querySelector('[onclick="switchTab(\'saved\')"]').style.display = 'none';
+    document.querySelector('h2').style.display = 'none';
+    document.body.classList.add('embedded');
+  }
+
   var currentResult = null;
   var currentCityId = null;
   var citiesData = {};
-  var currentMode = 'template';
-
-  function setMode(mode) {
-    currentMode = mode;
-    document.getElementById('modeTemplate').style.background = mode === 'template' ? 'var(--text-primary)' : 'var(--input-surface)';
-    document.getElementById('modeTemplate').style.color      = mode === 'template' ? '#fff' : 'var(--text-primary)';
-    document.getElementById('modeTemplate').style.borderColor= mode === 'template' ? 'var(--text-primary)' : 'var(--input-surface)';
-    document.getElementById('modeIntent').style.background   = mode === 'intent'   ? 'var(--text-primary)' : 'var(--input-surface)';
-    document.getElementById('modeIntent').style.color        = mode === 'intent'   ? '#fff' : 'var(--text-primary)';
-    document.getElementById('modeIntent').style.borderColor  = mode === 'intent'   ? 'var(--text-primary)' : 'var(--input-surface)';
-  }
+  var currentStages = 2;
 
   // ── Tabs ──
   function switchTab(name) {
@@ -187,8 +195,41 @@
   }
 
   // ── Tags ──
+  var TAG_RULES = {
+    category: { min: 1, max: 3, exclusive: false },
+    vibe:     { min: 1, max: 3, exclusive: false },
+    special:  { min: 0, max: 1, exclusive: true  },
+    price:    { min: 1, max: 1, exclusive: true  }
+  };
+
   function toggleTag(el) {
-    el.classList.toggle('selected');
+    var group = el.dataset.group;
+    var rule = TAG_RULES[group];
+    var allInGroup = Array.from(document.querySelectorAll('.tag[data-group="' + group + '"]'));
+    var selected = allInGroup.filter(function(t) { return t.classList.contains('selected'); });
+    var isSelected = el.classList.contains('selected');
+    if (rule.exclusive) {
+      if (isSelected) {
+        if (rule.min === 0) el.classList.remove('selected');
+      } else {
+        allInGroup.forEach(function(t) { t.classList.remove('selected'); });
+        el.classList.add('selected');
+      }
+    } else {
+      if (isSelected) {
+        if (selected.length > rule.min) el.classList.remove('selected');
+      } else {
+        if (selected.length < rule.max) el.classList.add('selected');
+      }
+    }
+  }
+
+  function validateTags() {
+    var tags = getSelectedTags();
+    if (tags.category_tags.length < 1) { setStatus('Select at least 1 category tag.', true); return false; }
+    if (tags.vibe_tags.length < 1)     { setStatus('Select at least 1 vibe tag.', true);     return false; }
+    if (tags.price_tags.length !== 1)  { setStatus('Select exactly 1 price tag.', true);     return false; }
+    return true;
   }
 
   function getSelectedTags() {
@@ -226,31 +267,56 @@
     });
   }
 
+  // ── Distance helpers ──
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+            Math.sin(dLng/2)*Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function updateDistances() {
+    var keys = Object.keys(selectedByStage).map(Number).sort(function(a,b){return a-b;});
+    for (var k = 0; k < keys.length - 1; k++) {
+      var a = keys[k], b = keys[k+1];
+      var vA = VENUES_FLAT[selectedByStage[a]];
+      var vB = VENUES_FLAT[selectedByStage[b]];
+      var el = document.getElementById('dist-' + a + '-' + b);
+      if (!el || !vA || !vB || !vA.lat || !vB.lat) continue;
+      var km = haversineKm(vA.lat, vA.lng, vB.lat, vB.lng);
+      el.textContent = '↓ ' + km.toFixed(1) + ' km to next stop';
+    }
+  }
+
   // ── Generate ──
   function generatePlan() {
     var cityId = document.getElementById('citySelect').value;
     if (!cityId) { setStatus('Select a city first.', true); return; }
+    if (!validateTags()) return;
     var areaId = document.getElementById('areaSelect').value || null;
     var tags = getSelectedTags();
-    setStatus('Generating (' + currentMode + ')...');
+    setStatus('Generating...');
     document.getElementById('btnGenerate').disabled = true;
+    if (document.body.classList.contains('embedded')) {
+      document.getElementById('resultSection').style.display = 'block';
+      document.getElementById('spinner').style.display = 'flex';
+      document.getElementById('venueList').innerHTML = '';
+    }
 
-    var endpoint = currentMode === 'intent' ? '/api/intent/' : '/api/template/';
-    fetch(endpoint, {
+    fetch('/api/intent/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags: tags, city_id: parseInt(cityId), area_id: areaId ? parseInt(areaId) : null })
+      body: JSON.stringify({ tags: tags, city_id: parseInt(cityId), area_id: areaId ? parseInt(areaId) : null, stages: currentStages })
     }).then(r => r.json()).then(function(data) {
       currentResult = { data: data, tags: tags, cityId: cityId, areaId: areaId };
       renderResult(data);
       document.getElementById('btnRegen').disabled = false;
       document.getElementById('btnSave').disabled = false;
       document.getElementById('btnGenerate').disabled = false;
-      if (currentMode === 'intent') {
-        setStatus('Done. Sequence: ' + (data.stage_categories || []).join(' → '));
-      } else {
-        setStatus('Done. Template: ' + data.template_id + ' | Confidence: ' + data.confidence_level);
-      }
+      setStatus('Done. Sequence: ' + (data.stage_categories || []).join(' → '));
     }).catch(function(e) {
       setStatus('Error: ' + e, true);
       document.getElementById('btnGenerate').disabled = false;
@@ -266,10 +332,9 @@
   var stageRanges = {};        // stageIndex -> {start, count}
 
   function renderResult(data) {
+    document.getElementById('spinner').style.display = 'none';
     document.getElementById('resultSection').style.display = 'block';
-    document.getElementById('planMeta').innerHTML = currentMode === 'intent'
-      ? 'mode: intent | sequence: ' + (data.stage_categories || []).join(' → ')
-      : 'template: ' + (data.template_id || '—') + ' | confidence: ' + (data.confidence_level || '—') + ' | score: ' + ((data.template_score || 0).toFixed(2));
+    document.getElementById('planMeta').innerHTML = 'sequence: ' + (data.stage_categories || []).join(' → ');
 
     var stageList = Array.isArray(data.venue_data) ? data.venue_data : [];
     VENUES_FLAT = [];
@@ -278,6 +343,7 @@
     selectedByStage = {};
     stageRanges = {};
 
+    var renderedStages = [];
     stageList.forEach(function(stage, i) {
       var selectedVenues = Array.isArray(stage[0]) ? stage[0] : [];
       // 3-element = (venues, area_name, transition); 2-element = (venues, transition)
@@ -288,6 +354,12 @@
       var stageStart = VENUES_FLAT.length;
       selectedByStage[i] = stageStart; // default: first
       stageRanges[i] = { start: stageStart, count: selectedVenues.length };
+
+      if (renderedStages.length > 0) {
+        var prev = renderedStages[renderedStages.length - 1];
+        html += '<div id="dist-' + prev + '-' + i + '" class="dist-connector">↓ calculating...</div>';
+      }
+      renderedStages.push(i);
 
       html += '<div class="stage-label">Stage ' + (i + 1) + (areaName ? ' · ' + areaName : '') +
         ' <span style="font-weight:400;color:var(--text-muted);">(' + selectedVenues.length + ' option' + (selectedVenues.length > 1 ? 's' : '') + ')</span></div>';
@@ -312,7 +384,7 @@
         (tags.price_tags||[]).forEach(function(t){ html += '<span class="venue-tag tag-price">' + t.replace(/_/g,' ') + '</span>'; });
         html += '</div>';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">';
-        html += '<span style="font-size:11px;color:var(--text-muted);font-family:monospace;">score: ' + (v.score||0).toFixed(4) + '</span>';
+        html += '<span class="score-label" style="font-size:11px;color:var(--text-muted);font-family:monospace;">score: ' + (v.score||0).toFixed(4) + '</span>';
         html += '<button onclick="selectVenue(' + i + ',' + idx + ')" id="sel-btn-' + idx + '" style="padding:5px 14px;font-size:12px;font-weight:600;border-radius:8px;border:none;cursor:pointer;background:' + (isSelected ? 'var(--accent)' : 'var(--input-surface)') + ';color:' + (isSelected ? '#fff' : 'var(--text-primary)') + ';">' + (isSelected ? '✓ Selected' : 'Select') + '</button>';
         html += '</div>';
         html += '</div></div>';
@@ -323,6 +395,8 @@
 
     document.getElementById('venueList').innerHTML = html || '<p style="color:var(--text-muted);font-size:13px;">No venues returned.</p>';
     document.getElementById('shareLink').innerHTML = '';
+    document.querySelectorAll('[id^="stage-row-"]').forEach(enableDragScroll);
+    updateDistances();
   }
 
   // ── Select venue ──
@@ -341,6 +415,7 @@
       btn.style.color      = isThis ? '#fff' : 'var(--text-primary)';
     }
     selectedByStage[stageIdx] = venueIdx;
+    updateDistances();
   }
 
   // ── Modal ──
@@ -395,6 +470,10 @@
 
     setStatus('Saving...');
     document.getElementById('btnSave').disabled = true;
+    if (document.body.classList.contains('embedded')) {
+      document.getElementById('spinner').style.display = 'flex';
+      document.getElementById('venueList').innerHTML = '';
+    }
 
     fetch('/api/save-plan/', {
       method: 'POST',
@@ -408,9 +487,10 @@
       })
     }).then(r => r.json()).then(function(res) {
       document.getElementById('btnSave').disabled = false;
+      document.getElementById('spinner').style.display = 'none';
       if (res.share_token) {
         var url = window.location.origin + '/plan/' + res.share_token + '/';
-        document.getElementById('shareLink').innerHTML = '✅ Saved — <a href="' + url + '" target="_blank">' + url + '</a>';
+        document.getElementById('shareLink').innerHTML = '<a class="share-btn" href="' + url + '" target="_blank">Share Plan</a>';
         setStatus('Saved. Plan ID: ' + res.plan_id);
       } else {
         setStatus('Error: ' + JSON.stringify(res), true);
@@ -418,6 +498,7 @@
     }).catch(function(e) {
       setStatus('Save error: ' + e, true);
       document.getElementById('btnSave').disabled = false;
+      document.getElementById('spinner').style.display = 'none';
     });
   }
 
@@ -440,6 +521,25 @@
     }).catch(function() {
       document.getElementById('savedList').innerHTML = '<span class="error">Failed to load.</span>';
     });
+  }
+
+  // ── Drag-to-scroll on stage rows ──
+  function enableDragScroll(el) {
+    var isDown = false, startX, scrollLeft;
+    el.addEventListener('mousedown', function(e) {
+      isDown = true;
+      el.style.cursor = 'grabbing';
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    });
+    el.addEventListener('mouseleave', function() { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mouseup',    function() { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mousemove',  function(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX);
+    });
+    el.style.cursor = 'grab';
   }
 
   function setStatus(msg, isError) {

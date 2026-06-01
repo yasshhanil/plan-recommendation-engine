@@ -239,7 +239,7 @@ class DataFetcher:
             print(f"Error creating venue from place data: {e}")
             return None
 
-    def fetch_and_store_venues(self, query=BULK_SEARCH_QUERY, max_venues=20, area=None):
+    def fetch_and_store_venues(self, query=BULK_SEARCH_QUERY, max_venues=20, area=None, max_distance_km=30):
         """Fetch venues and store in database"""
         print(f"Fetching test data for {TEST_LOCATION['name']}...")
         print(f"Using query: {query}")
@@ -271,7 +271,7 @@ class DataFetcher:
             # Process places
             for place in places[:max_venues]:
                 # Check if we should skip this venue
-                should_skip, skip_reason = self.should_skip_venue(place, 30, area.lat, area.lng)
+                should_skip, skip_reason = self.should_skip_venue(place, max_distance_km, area.lat, area.lng)
                 if should_skip:
                     display_name = place.get('displayName', {}).get('text', 'Unknown')
                     print(f"Skipping {display_name} - {skip_reason}")

@@ -7,11 +7,11 @@
 
   <meta property="og:type"        content="website">
   <meta property="og:title"       content="Outtie — Your night out, planned.">
-  <meta property="og:description" content="Tell us your vibe and we'll build the perfect day out, evening, or night on the town.">
+  <meta property="og:description" content="Tell us your vibe. Outtie builds a complete outing around your city in seconds.">
 
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="Outtie — Your night out, planned.">
-  <meta name="twitter:description" content="Tell us your vibe and we'll build the perfect day out, evening, or night on the town.">
+  <meta name="twitter:description" content="Tell us your vibe. Outtie builds a complete outing around your city in seconds.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
     }
 
     /* ── Header ── */
-    .header { padding: 48px 0 40px; }
+    .header { padding: 48px 0 32px; }
 
     .logo {
       font-size: 13px;
@@ -83,8 +83,56 @@
       font-size: 17px;
       color: var(--text-secondary);
       line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .hero-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       margin-bottom: 0;
     }
+
+    .hero-bullets li {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-bullets li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Social proof ── */
+    .social-proof {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 28px 0;
+    }
+
+    .proof-pill {
+      background: var(--card);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .proof-pill span { color: var(--text-primary); }
+
+    .section-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
 
     /* ── Screenshots ── */
     .screenshots {
@@ -106,6 +154,7 @@
       display: flex;
       gap: 12px;
       margin-bottom: 28px;
+      justify-content: center;
     }
 
     .store-button {
@@ -126,6 +175,9 @@
 
     .store-button-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
     .store-button-name  { font-size: 15px; font-weight: 700; color: var(--text-secondary); }
+
+    /* ── Generator ── */
+    .tryout-frame { width: 100%; height: 600px; border: none; border-radius: var(--radius-card); box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: block; margin-bottom: 28px; transition: height 0.2s ease; }
 
     /* ── Notify form ── */
     .notify-form {
@@ -221,8 +273,23 @@
       <div class="logo">Outtie</div>
       <span class="hero-label">Coming soon</span>
       <h1 class="hero-heading">Your night out,<br><span>planned.</span></h1>
-      <p class="hero-sub">Tell us your vibe — we'll build you a day out, evening, or night on the town that fits. Discover thousands of unique possibilities across your city — no two <strong style="color:var(--accent);">outings</strong> are the same. Every plan is shareable as a card so you can send it to friends or loved ones before you've even made plans to meet.</p>
+      <p class="hero-sub">Tell us your vibe. Outtie creates complete outings around your city — from first dates and coffee crawls to nights out with friends.</p>
+      <ul class="hero-bullets">
+        <li>No endless scrolling</li>
+        <li>No group indecision</li>
+        <li>Just a plan</li>
+      </ul>
     </div>
+
+    <div class="social-proof">
+      <div class="proof-pill"><span>6,000+</span> venues indexed</div>
+      <div class="proof-pill">Launching across the US, UK &amp; India</div>
+      <div class="proof-pill">Every plan is unique</div>
+    </div>
+
+    <p class="section-label">Plan Tonight</p>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">This is a demo of the Outtie engine — pick your vibe and see what it builds. The full app experience is coming soon.</p>
+    <iframe class="tryout-frame" id="tryoutFrame" src="/test/?embed=1" title="Plan generator" onload="resizeFrame()"></iframe>
 
     <div class="screenshots">
       <img class="screenshot" src="https://storage.googleapis.com/plan-venue-images/static-resources/152shots_so.png" alt="Outtie app screenshot">
@@ -237,8 +304,8 @@
     </div>
 
     <div class="notify-form" id="notifyForm">
-      <p class="notify-form-title">Notify me when it's live</p>
-      <p class="notify-form-subtitle">Drop your email and we'll let you know the moment it launches in your city.</p>
+      <p class="notify-form-title">Like what you see? Get notified when we launch.</p>
+      <p class="notify-form-subtitle">Drop your email and we'll let you know the moment it launches in your city. Don't see your city yet? Enter it anyway — enough requests and we'll make it happen.</p>
 
       <input class="notify-input" id="notifyEmail" type="email" placeholder="Your email address" autocomplete="email">
       <p class="notify-error" id="emailError">Please enter a valid email address.</p>
@@ -261,6 +328,25 @@
   </div>
 
   <script>
+    function resizeFrame() {
+      var frame = document.getElementById('tryoutFrame');
+      try {
+        var height = frame.contentDocument.body.scrollHeight;
+        frame.style.height = height + 'px';
+      } catch(e) {}
+    }
+
+    setInterval(function() {
+      var frame = document.getElementById('tryoutFrame');
+      if (!frame) return;
+      try {
+        var height = frame.contentDocument.body.scrollHeight;
+        if (parseInt(frame.style.height) !== height) {
+          frame.style.height = height + 'px';
+        }
+      } catch(e) {}
+    }, 300);
+
     function submitWaitlist() {
       var emailEl = document.getElementById('notifyEmail');
       var cityEl  = document.getElementById('notifyCity');

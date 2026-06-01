@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from playwright.sync_api import sync_playwright
 
 from .models import Venue, Area, TAGS_CONSTANT
-from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS, CATEGORY_SEQUENCE_WEIGHT
+from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS, CATEGORY_SEQUENCE_WEIGHT, CATEGORY_TAGS
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +172,7 @@ def assign_categories_to_stages(category_tags: List[str], num_stages: int) -> Li
     Examples (3 stages):
       ['bar', 'cafe', 'dessert'] → ['cafe', 'bar', 'dessert']
       ['cafe']                   → ['cafe', 'cafe', 'cafe']
-      ['cafe', 'bar']            → ['cafe', 'bar', 'bar']
+      ['cafe', 'bar']            → ['cafe', 'bar', 'cafe']
     """
     if not category_tags:
         return ['restaurant'] * num_stages
@@ -186,8 +186,10 @@ def assign_categories_to_stages(category_tags: List[str], num_stages: int) -> Li
         step = len(sorted_cats) / num_stages
         return [sorted_cats[int(i * step)] for i in range(num_stages)]
 
-    # Fewer categories than stages — pad with the last (latest) category
-    return sorted_cats + [sorted_cats[-1]] * (num_stages - len(sorted_cats))
+    unselected = [c for c in CATEGORY_TAGS if c not in sorted_cats]
+    pool = sorted_cats + unselected
+    combined = [pool[i % len(pool)] for i in range(num_stages)]
+    return sorted(combined, key=lambda c: CATEGORY_SEQUENCE_WEIGHT.get(c, 3.0))
 
 
 def generate_plan_from_intent(input_tags: Dict, area_id: Optional[int], num_stages: int = 2) -> Dict:

@@ -5,6 +5,7 @@ Django views for the Plan Recommendation Engine API
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.db import transaction
@@ -102,8 +103,8 @@ def template_recommendation(request):
         
         print("input_tags:", input_tags)
        
-        number_of_stages = 2
-        
+        number_of_stages = int(body.get('stages', 2))
+
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
         
         sorted_scores = sorted(all_scores.values(), reverse=True)
@@ -575,6 +576,7 @@ def home(request):
     return render(request, 'home.html')
 
 
+@xframe_options_exempt
 def test_plan(request):
     from .constants import CATEGORY_TAGS, VIBE_TAGS, SPECIAL_TAGS, PRICE_TAGS
     return render(request, 'test_plan.html', {
