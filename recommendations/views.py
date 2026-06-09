@@ -28,10 +28,12 @@ from django.db import models as django_models
 from .models import Area, Plan, Venue, Wishlister, TAG_STRUCTURE
 from .templates import select_best_template, get_confidence_level
 from .template_constants import PLAN_STAGE_WEIGHTS_2_STAGE, PLAN_STAGE_WEIGHTS_3_STAGE, TEMPLATE_COPY
+from .decorators import require_api_key
 logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
+@require_api_key
 def recommendation(request):
     """Recommendation endpoint with database integration"""
     if request.method == 'GET':
@@ -48,8 +50,6 @@ def recommendation(request):
         area_id = random.choice(areas).id if areas else 1
         area_id = 1
         weighted_tags = assign_weights(input_tags)
-        print("Weighted tags:", weighted_tags)
-        
         result = generate_plan(weighted_tags, input_tags, area_id, num_recommendations=3)
         
         return JsonResponse(result)
@@ -57,6 +57,7 @@ def recommendation(request):
 
 
 @csrf_exempt
+@require_api_key
 def template_recommendation(request):
     """
     Template-based recommendation endpoint with template selection.
@@ -100,9 +101,7 @@ def template_recommendation(request):
             input_tags = tags
         else:
             input_tags = json.loads(tags)
-        
-        print("input_tags:", input_tags)
-       
+
         number_of_stages = int(body.get('stages', 2))
 
         template_id, template_score, confidence_score, all_scores = select_best_template(input_tags)
@@ -142,6 +141,7 @@ def template_recommendation(request):
 
 
 @csrf_exempt
+@require_api_key
 def save_plan(request):
     """Save a plan endpoint"""
     if request.method == 'POST':
@@ -244,6 +244,7 @@ def save_plan(request):
 
 
 @csrf_exempt
+@require_api_key
 def get_plans(request):
     """Get all plans endpoint"""
     if request.method == 'GET':
@@ -275,6 +276,7 @@ def get_plans(request):
 
 
 @csrf_exempt
+@require_api_key
 def get_venues_by_ids(request):
     """Get venue data by IDs endpoint"""
     if request.method == 'POST':
@@ -322,6 +324,7 @@ def get_venues_by_ids(request):
 
 
 @csrf_exempt
+@require_api_key
 def get_areas_by_city(request):
     """Return all active areas for a given city name"""
     if request.method == 'GET':
@@ -350,6 +353,7 @@ def get_areas_by_city(request):
 
 
 @csrf_exempt
+@require_api_key
 def get_cities(request):
     """Return all active cities with their country and areas"""
     if request.method == 'GET':
@@ -466,6 +470,7 @@ def plan_landing_page(request, token):
 
 
 @csrf_exempt
+@require_api_key
 def preview_share_card(request):
     """Preview share card design in browser using existing plan data"""
     if request.method == 'GET':
@@ -579,15 +584,18 @@ def home(request):
 @xframe_options_exempt
 def test_plan(request):
     from .constants import CATEGORY_TAGS, VIBE_TAGS, SPECIAL_TAGS, PRICE_TAGS
+    from django.conf import settings
     return render(request, 'test_plan.html', {
         'category_tags': CATEGORY_TAGS,
         'vibe_tags': VIBE_TAGS,
         'special_tags': SPECIAL_TAGS,
         'price_tags': PRICE_TAGS,
+        'api_key': getattr(settings, 'API_SECRET_KEY', ''),
     })
 
 
 @csrf_exempt
+@require_api_key
 def intent_recommendation(request):
     """
     Intent-based recommendation endpoint.
@@ -650,6 +658,7 @@ def intent_recommendation(request):
 
 
 @csrf_exempt
+@require_api_key
 def join_waitlist(request):
     if request.method != 'POST':
         return JsonResponse({"error": "Method not allowed"}, status=405)

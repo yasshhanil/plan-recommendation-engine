@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c$%z^!kw$s5c58pk^a*rxq&(i=1vde@#mcdk3mgvzbs@lw=1ux'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-c$%z^!kw$s5c58pk^a*rxq&(i=1vde@#mcdk3mgvzbs@lw=1ux')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
@@ -152,6 +152,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Google Places API configuration
 GOOGLE_PLACES_API_KEY = os.getenv('GOOGLE_PLACES_API_KEY')
+
+# Google OAuth
+GOOGLE_WEB_CLIENT_ID = os.getenv('GOOGLE_WEB_CLIENT_ID')
+GOOGLE_WEB_CLIENT_SECRET = os.getenv('GOOGLE_WEB_CLIENT_SECRET')
+GOOGLE_IOS_CLIENT_ID = os.getenv('GOOGLE_IOS_CLIENT_ID', '872602560767-2mi5csvm4grb6fchi1j0kuflohmec8tr.apps.googleusercontent.com')
+
+API_SECRET_KEY = os.getenv('API_SECRET_KEY', '')
 
 # Logging configuration
 LOGGING = {

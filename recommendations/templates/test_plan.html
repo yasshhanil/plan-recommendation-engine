@@ -124,7 +124,6 @@
     </select>
     <button class="primary" onclick="generatePlan()" id="btnGenerate">Generate Plan</button>
     <button onclick="regenerate()" id="btnRegen" disabled>Regenerate</button>
-    <button onclick="savePlan()" id="btnSave" disabled>Save Plan</button>
     <div id="status"></div>
   </section>
 
@@ -134,6 +133,7 @@
     <div id="planMeta" style="font-size:12px;color:#666;margin-bottom:12px;font-family:monospace;"></div>
     <div id="venueList"></div>
     <div id="shareLink" style="margin-top:10px;font-size:12px;font-family:monospace;"></div>
+    <button onclick="savePlan()" id="btnSave" disabled style="margin-top:16px;">Save Plan</button>
   </section>
 
   <!-- Modal -->
@@ -179,6 +179,8 @@
     document.querySelector('h2').style.display = 'none';
     document.body.classList.add('embedded');
   }
+
+  var API_KEY = '{{ api_key }}';
 
   var currentResult = null;
   var currentCityId = null;
@@ -245,7 +247,7 @@
   }
 
   // ── Location — load everything from get-cities in one shot ──
-  fetch('/api/get-cities/').then(r => r.json()).then(function(data) {
+  fetch('/api/get-cities/', { headers: { 'X-Api-Key': API_KEY } }).then(r => r.json()).then(function(data) {
     var sel = document.getElementById('citySelect');
     sel.innerHTML = '<option value="">Select city</option>';
     (data.cities || []).forEach(function(c) {
@@ -308,7 +310,7 @@
 
     fetch('/api/intent/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
       body: JSON.stringify({ tags: tags, city_id: parseInt(cityId), area_id: areaId ? parseInt(areaId) : null, stages: currentStages })
     }).then(r => r.json()).then(function(data) {
       currentResult = { data: data, tags: tags, cityId: cityId, areaId: areaId };
@@ -477,7 +479,7 @@
 
     fetch('/api/save-plan/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Api-Key': API_KEY },
       body: JSON.stringify({
         ids: ids,
         city_id: parseInt(cityId),
@@ -505,7 +507,7 @@
   // ── Saved Plans ──
   function loadSavedPlans() {
     document.getElementById('savedList').innerHTML = 'Loading...';
-    fetch('/api/get-plans/').then(r => r.json()).then(function(data) {
+    fetch('/api/get-plans/', { headers: { 'X-Api-Key': API_KEY } }).then(r => r.json()).then(function(data) {
       var plans = data.plans || [];
       if (!plans.length) { document.getElementById('savedList').innerHTML = '<p style="color:#888;font-size:12px;">No saved plans.</p>'; return; }
       var html = '';

@@ -267,3 +267,35 @@ class Wishlister(models.Model):
 
     def __str__(self):
         return f"{self.email} — {self.city}"
+
+
+# ============================================================================
+# AUTH MODELS
+# ============================================================================
+
+class AppUser(models.Model):
+    email = models.EmailField(db_index=True)
+    name = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    platform = models.CharField(max_length=20)       # 'google' | 'apple'
+    platform_id = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "app_users"
+        unique_together = [('platform', 'platform_id')]
+
+    def __str__(self):
+        return f"{self.email} ({self.platform})"
+
+
+class AuthToken(models.Model):
+    token = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True)
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='tokens')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "auth_tokens"
+
+    def __str__(self):
+        return f"Token for {self.user.email}"

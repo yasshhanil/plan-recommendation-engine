@@ -3,7 +3,7 @@ Django admin configuration for recommendations app
 """
 
 from django.contrib import admin
-from .models import Country, City, Area, Venue, Plan, ApiQuery, Wishlister
+from .models import Country, City, Area, Venue, Plan, ApiQuery, Wishlister, AppUser, AuthToken
 
 
 @admin.register(Country)
@@ -115,6 +115,23 @@ class WishlisterAdmin(admin.ModelAdmin):
     list_display = ['email', 'city', 'created_at']
     search_fields = ['email', 'city']
     readonly_fields = ['created_at']
+    ordering = ['-created_at']
+
+
+@admin.register(AppUser)
+class AppUserAdmin(admin.ModelAdmin):
+    list_display = ['email', 'name', 'platform', 'city', 'created_at']
+    list_filter = ['platform', 'city']
+    search_fields = ['email', 'name']
+    readonly_fields = ['created_at', 'platform_id']
+    ordering = ['-created_at']
+
+
+@admin.register(AuthToken)
+class AuthTokenAdmin(admin.ModelAdmin):
+    list_display = ['user', 'token', 'created_at']
+    search_fields = ['user__email']
+    readonly_fields = ['token', 'created_at']
     ordering = ['-created_at']
 
 

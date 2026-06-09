@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from playwright.sync_api import sync_playwright
 
 from .models import Venue, Area, TAGS_CONSTANT
-from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS, CATEGORY_SEQUENCE_WEIGHT, CATEGORY_TAGS
+from .constants import TAGS_CONSTANT, VENUE_SWITCH_PROBABILITY, tag_weight_chart, tag_decay_chart, venue_scoring_weights, CATEGORY_ENERGIES, ENERGY_TRANSITIONS, CATEGORY_SEQUENCE_WEIGHT
 
 logger = logging.getLogger(__name__)
 
@@ -186,9 +186,7 @@ def assign_categories_to_stages(category_tags: List[str], num_stages: int) -> Li
         step = len(sorted_cats) / num_stages
         return [sorted_cats[int(i * step)] for i in range(num_stages)]
 
-    unselected = [c for c in CATEGORY_TAGS if c not in sorted_cats]
-    pool = sorted_cats + unselected
-    combined = [pool[i % len(pool)] for i in range(num_stages)]
+    combined = [sorted_cats[i % len(sorted_cats)] for i in range(num_stages)]
     return sorted(combined, key=lambda c: CATEGORY_SEQUENCE_WEIGHT.get(c, 3.0))
 
 

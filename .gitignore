@@ -14,6 +14,7 @@ data_population/
 gcs-key.json
 staticfiles/
 data_dump*.json
+backup.json
 
 # Management commands (except functions.py)
 # recommendations/management/

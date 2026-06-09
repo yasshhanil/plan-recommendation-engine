@@ -149,7 +149,7 @@ class DataFetcher:
         # Convert sets back to lists for JSON serialization
         return {key: list(value) for key, value in tags.items()}
     
-    def should_skip_venue(self, place_data, min_rating_count=30, area_lat=None, area_lng=None):
+    def should_skip_venue(self, place_data, min_rating_count=30, area_lat=None, area_lng=None, max_distance_km=2.0):
         """Check if a venue should be skipped based on filtering criteria"""
         # Check if place has required fields
         place_id = place_data.get('id')
@@ -176,8 +176,8 @@ class DataFetcher:
                 a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
                 distance = 6371 * 2 * math.asin(math.sqrt(a))  # Earth radius in km
                 
-                if distance > 2.5:
-                    return True, f"Too far from area ({distance:.2f}km > 2.5km)"
+                if distance > max_distance_km:
+                    return True, f"Too far from area ({distance:.2f}km > {max_distance_km}km)"
         
         return False, ""
 
@@ -239,7 +239,7 @@ class DataFetcher:
             print(f"Error creating venue from place data: {e}")
             return None
 
-    def fetch_and_store_venues(self, query=BULK_SEARCH_QUERY, max_venues=20, area=None, max_distance_km=30):
+    def fetch_and_store_venues(self, query=BULK_SEARCH_QUERY, max_venues=20, area=None, max_distance_km=2.0):
         """Fetch venues and store in database"""
         print(f"Fetching test data for {TEST_LOCATION['name']}...")
         print(f"Using query: {query}")
@@ -251,7 +251,8 @@ class DataFetcher:
             # Single bulk fetch instead of multiple queries
             print(f"\nBulk search: {query}")
             
-            results = self.text_search(query, TEST_LOCATION, radius=TEST_LOCATION['radius'], max_results=max_venues)
+            location = {'lat': area.lat, 'lng': area.lng} if area else TEST_LOCATION
+            results = self.text_search(query, location, radius=3000, max_results=max_venues)
             
             if not results or 'places' not in results:
                 print(f"Failed to fetch bulk results: {results}")
@@ -272,6 +273,7 @@ class DataFetcher:
             for place in places[:max_venues]:
                 # Check if we should skip this venue
                 should_skip, skip_reason = self.should_skip_venue(place, max_distance_km, area.lat, area.lng)
+                should_skip, skip_reason = self.should_skip_venue(place, 30, area.lat, area.lng, max_distance_km)
                 if should_skip:
                     display_name = place.get('displayName', {}).get('text', 'Unknown')
                     print(f"Skipping {display_name} - {skip_reason}")
