@@ -231,6 +231,7 @@ def json_to_tags(tags_json):
 
 class Plan(models.Model):
     """Database model for generated plans."""
+    user = models.ForeignKey('AppUser', on_delete=models.CASCADE, null=True, blank=True, related_name='plans')
     city = models.ForeignKey('City', on_delete=models.SET_NULL, null=True, blank=True, related_name='plans')
     area = models.JSONField(null=True, blank=True, help_text="Array of area names")
     ids = models.JSONField(null=True, blank=True, help_text="List of venue IDs in the plan")

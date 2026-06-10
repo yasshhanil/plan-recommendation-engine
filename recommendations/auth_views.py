@@ -208,7 +208,7 @@ def apple_auth(request):
     full_name = body.get('full_name') or {}
     given = (full_name.get('givenName') or '') if isinstance(full_name, dict) else ''
     family = (full_name.get('familyName') or '') if isinstance(full_name, dict) else ''
-    name = f'{given} {family}'.strip() or email.split('@')[0]
+    name = f'{given} {family}'.strip()
 
     user = _get_or_create_user('apple', platform_id, email, name)
     token = AuthToken.objects.create(user=user)

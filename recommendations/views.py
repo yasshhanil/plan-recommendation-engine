@@ -29,6 +29,7 @@ from .models import Area, Plan, Venue, Wishlister, TAG_STRUCTURE
 from .templates import select_best_template, get_confidence_level
 from .template_constants import PLAN_STAGE_WEIGHTS_2_STAGE, PLAN_STAGE_WEIGHTS_3_STAGE, TEMPLATE_COPY
 from .decorators import require_api_key
+from .auth_views import _authenticate
 logger = logging.getLogger(__name__)
 
 
@@ -207,6 +208,7 @@ def save_plan(request):
                 logger.warning(f"Failed to calculate template, headline, or description for plan: {e}")
 
         plan = Plan.objects.create(
+            user=_authenticate(request),
             city=city_obj,
             area=areas,
             ids=ids,
@@ -246,9 +248,13 @@ def save_plan(request):
 @csrf_exempt
 @require_api_key
 def get_plans(request):
-    """Get all plans endpoint"""
+    """Get plans saved by the authenticated user"""
     if request.method == 'GET':
-        plans = Plan.objects.all().order_by('-created_at')
+        user = _authenticate(request)
+        if not user:
+            return JsonResponse({"success": True, "plans": [], "count": 0})
+
+        plans = Plan.objects.filter(user=user).order_by('-created_at')
         plans_data = []
         for plan in plans:
             plans_data.append({
