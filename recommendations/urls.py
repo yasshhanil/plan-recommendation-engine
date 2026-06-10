@@ -4,13 +4,16 @@ URL configuration for recommendations app
 
 from django.urls import path
 from . import views
-from .auth_views import google_auth, apple_auth, set_city, me
+from .auth_views import google_auth, apple_auth, set_city, me, register, login, delete_account
 
 app_name = 'recommendations'
 
 urlpatterns = [
     path('auth/google/', google_auth, name='auth_google'),
     path('auth/apple/', apple_auth, name='auth_apple'),
+    path('auth/register/', register, name='auth_register'),
+    path('auth/login/', login, name='auth_login'),
+    path('auth/delete-account/', delete_account, name='auth_delete_account'),
     path('auth/set-city/', set_city, name='auth_set_city'),
     path('auth/me/', me, name='auth_me'),
     path('', views.recommendation, name='recommendation'),

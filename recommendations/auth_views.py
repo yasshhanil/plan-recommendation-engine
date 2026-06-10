@@ -4,6 +4,7 @@ import logging
 
 import requests
 from django.conf import settings
+from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -214,3 +215,81 @@ def apple_auth(request):
     token = AuthToken.objects.create(user=user)
     logger.info(f'[apple_auth] Auth successful for {email}')
     return _user_response(user, token)
+
+
+@csrf_exempt
+@require_api_key
+def register(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    email = (body.get('email') or '').strip().lower()
+    password = body.get('password') or ''
+    name = (body.get('name') or '').strip()
+
+    if not email or '@' not in email:
+        return JsonResponse({'error': 'Valid email required'}, status=400)
+    if len(password) < 8:
+        return JsonResponse({'error': 'Password must be at least 8 characters'}, status=400)
+
+    if AppUser.objects.filter(platform='email', platform_id=email).exists():
+        return JsonResponse({'error': 'An account with this email already exists'}, status=409)
+
+    user = AppUser.objects.create(
+        platform='email',
+        platform_id=email,
+        email=email,
+        name=name,
+        password=make_password(password),
+    )
+    token = AuthToken.objects.create(user=user)
+    logger.info(f'[register] New email account created: {email}')
+    return _user_response(user, token)
+
+
+@csrf_exempt
+@require_api_key
+def login(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    email = (body.get('email') or '').strip().lower()
+    password = body.get('password') or ''
+
+    try:
+        user = AppUser.objects.get(platform='email', platform_id=email)
+    except AppUser.DoesNotExist:
+        return JsonResponse({'error': 'Invalid email or password'}, status=401)
+
+    if not user.password or not check_password(password, user.password):
+        return JsonResponse({'error': 'Invalid email or password'}, status=401)
+
+    token = AuthToken.objects.create(user=user)
+    logger.info(f'[login] {email} signed in')
+    return _user_response(user, token)
+
+
+@csrf_exempt
+@require_api_key
+def delete_account(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    user = _authenticate(request)
+    if not user:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    email = user.email
+    user.delete()
+    logger.info(f'[delete_account] Deleted account for {email}')
+    return JsonResponse({'success': True})

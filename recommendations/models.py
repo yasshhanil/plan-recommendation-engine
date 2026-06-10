@@ -278,8 +278,9 @@ class AppUser(models.Model):
     email = models.EmailField(db_index=True)
     name = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255, blank=True, null=True)
-    platform = models.CharField(max_length=20)       # 'google' | 'apple'
+    platform = models.CharField(max_length=20)       # 'google' | 'apple' | 'email'
     platform_id = models.CharField(max_length=255)
+    password = models.CharField(max_length=128, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
